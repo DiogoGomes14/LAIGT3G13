@@ -34,6 +34,7 @@ XMLscene.prototype.initLights = function () {
     this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
     this.lights[0].update();
 */
+
     this.shader.unbind();
 };
 
@@ -51,16 +52,32 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () {
-    //TODO Fix camera not moving and add the scale from INITIALS
-    //console.log(JSON.stringify(this.camera));
-    //this.camera = this.graph.camera; //TODO
+    //TODO add the scale from INITIALS
+    //TODO apply doubleside from ilumination
+
+    this.camera.setPosition(vec3.fromValues(this.graph.initials.translate.x, this.graph.initials.translate.y, this.graph.initials.translate.z));
+    this.camera.near = this.graph.initials.frustum.near;
+    this.camera.far = this.graph.initials.frustum.far;
+    this.camera.orbit(this.graph.initials.rotate1.axis, this.graph.initials.rotate1.angle);
+    this.camera.orbit(this.graph.initials.rotate2.axis, this.graph.initials.rotate2.angle);
+    this.camera.orbit(this.graph.initials.rotate3.axis, this.graph.initials.rotate3.angle);
 
     this.lights = this.graph.lights;
 
-    this.gl.clearColor(this.graph.ilumination[2][0],this.graph.ilumination[2][1],this.graph.ilumination[2][2],this.graph.ilumination[2][3]);
-    this.setGlobalAmbientLight(this.graph.ilumination[0][0],this.graph.ilumination[0][1],this.graph.ilumination[0][2],this.graph.ilumination[0][3])
+    this.setGlobalAmbientLight(
+        this.graph.ilumination.ambient.r,
+        this.graph.ilumination.ambient.g,
+        this.graph.ilumination.ambient.b,
+        this.graph.ilumination.ambient.a
+    );
+    this.gl.clearColor(
+        this.graph.ilumination.background.r,
+        this.graph.ilumination.background.g,
+        this.graph.ilumination.background.b,
+        this.graph.ilumination.background.a
+    );
 
-    this.axis = new CGFaxis(this,this.graph.initials[6]);
+    this.axis = new CGFaxis(this,this.graph.initials.reference);
 };
 
 XMLscene.prototype.display = function () {
