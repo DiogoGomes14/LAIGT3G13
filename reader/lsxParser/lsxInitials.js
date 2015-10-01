@@ -11,9 +11,9 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
     this.initials = [];
     this.initials['frustum'] = this.parseFrustum(elems[0].children[0]);
     this.initials['translate'] = this.parseTranslate(elems[0].children[1]);
-    this.initials['rotate1'] = this.parseRotation(elems[0].children[2]);
+    this.initials['rotate3'] = this.parseRotation(elems[0].children[2]);
     this.initials['rotate2'] = this.parseRotation(elems[0].children[3]);
-    this.initials['rotate3'] = this.parseRotation(elems[0].children[4]);
+    this.initials['rotate1'] = this.parseRotation(elems[0].children[4]);
     this.initials['scale'] = this.parseScale(elems[0].children[5]);
     this.initials['reference'] = this.reader.getFloat(elems[0].children[6], 'length', true);
     /*

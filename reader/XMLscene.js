@@ -52,15 +52,33 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () {
-    //TODO add the scale from INITIALS
     //TODO apply doubleside from ilumination
 
-    this.camera.setPosition(vec3.fromValues(this.graph.initials.translate.x, this.graph.initials.translate.y, this.graph.initials.translate.z));
     this.camera.near = this.graph.initials.frustum.near;
     this.camera.far = this.graph.initials.frustum.far;
-    this.camera.orbit(this.graph.initials.rotate1.axis, this.graph.initials.rotate1.angle);
-    this.camera.orbit(this.graph.initials.rotate2.axis, this.graph.initials.rotate2.angle);
-    this.camera.orbit(this.graph.initials.rotate3.axis, this.graph.initials.rotate3.angle);
+
+    this.translate(
+        this.graph.initials.translate.x,
+        this.graph.initials.translate.y,
+        this.graph.initials.translate.z
+    );
+    this.rotate(
+        this.graph.initials.rotate1.axis,
+        this.graph.initials.rotate1.angle
+    );
+    this.rotate(
+        this.graph.initials.rotate2.axis,
+        this.graph.initials.rotate2.angle
+    );
+    this.rotate(
+        this.graph.initials.rotate3.axis,
+        this.graph.initials.rotate3.angle
+    );
+    this.scale(
+        this.graph.initials.scale.sx,
+        this.graph.initials.scale.sy,
+        this.graph.initials.scale.sz
+    );
 
     this.lights = this.graph.lights;
 
