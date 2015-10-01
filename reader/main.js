@@ -22,6 +22,7 @@ serialInclude([
     'lsxParser/lsxMaterials.js',
     'lsxParser/lsxNodes.js',
     'lsxParser/lsxTextures.js',
+    'Node1.js',
 
 main=function()
 {

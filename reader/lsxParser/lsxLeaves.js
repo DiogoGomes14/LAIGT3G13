@@ -17,7 +17,6 @@ MySceneGraph.prototype.parseLSXLeaves = function(rootElement) {
 
         this.leaves[e.id] = this.parseLSXLeaf(e);
     }
-    console.log(this.leaves);
 };
 
 MySceneGraph.prototype.parseLSXLeaf = function(element) {

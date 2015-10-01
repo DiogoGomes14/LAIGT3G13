@@ -44,6 +44,7 @@ MySceneGraph.prototype.parseTranslate = function(element) {
                 console.error('Error parsing ' + e + ' in parseTranslate');
         }
     }
+    arr['type'] = 'translation';
     return arr;
 };
 
@@ -57,6 +58,7 @@ MySceneGraph.prototype.parseRotation = function(element) {
     if(typeof(arr['angle']) != "number"){
         console.error('Error parsing angle in parseRotation');
     }
+    arr['type'] = 'rotation';
     return arr;
 };
 
@@ -71,6 +73,7 @@ MySceneGraph.prototype.parseScale = function(element) {
                 console.error('Error parsing ' + e + ' in parseScale');
         }
     }
+    arr['type'] = 'scale';
     return arr;
 };
 

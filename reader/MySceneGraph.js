@@ -65,6 +65,9 @@ MySceneGraph.prototype.parseLSX = function(rootElement) {
 		return error;
 	}
 
+	if(error = (this.parseLSXNodes(rootElement) != null)){
+		return error;
+	}
 };
 
 
