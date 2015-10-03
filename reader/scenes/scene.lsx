@@ -81,10 +81,10 @@
 
     <LEAVES>
         <!-- next lines define nodes of type leaf; they may be repeated, in any order, as necessary -->
-        <LEAF id="P1" type="rectangle" args="-0.5 0.5 -0.5 0.5" />      <!-- 2D coordinates for left-top and right-bottom vertices. -->
-        <LEAF id="P2" type="cylinder" args="1.0 0.5 0.5 10 12" />    <!-- height, bottom radius, top radius, sections along height, parts per section -->
-        <LEAF id="P3" type="sphere" args="0.5 6 12" />            <!-- radius, parts along radius, parts per section -->
-        <LEAF id="P4" type="triangle" args="0.0 1.0 0.0  0.0 0.0 0.0  1.0 0.0 0.0" />   <!-- coordinates of each vertex -->
+        <LEAF id="rectangle" type="rectangle" args="-0.5 0.5 0.5 -0.5" />      <!-- 2D coordinates for left-top and right-bottom vertices. -->
+        <LEAF id="cylinder" type="cylinder" args="1.0 0.5 0.5 10 12" />    <!-- height, bottom radius, top radius, sections along height, parts per section -->
+        <LEAF id="sphere" type="sphere" args="0.5 6 12" />            <!-- radius, parts along radius, parts per section -->
+        <LEAF id="triangle" type="triangle" args="0.0 1.0 0.0  0.0 0.0 0.0  1.0 0.0 0.0" />   <!-- coordinates of each vertex -->
     </LEAVES>
 
 

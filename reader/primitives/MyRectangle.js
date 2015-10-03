@@ -1,5 +1,33 @@
-function MyRectangle(scene, minS, maxS, minT, maxT) {
+function MyRectangle(scene, topX, topY, botX, botY, minS, maxS, minT, maxT) {
     CGFobject.call(this,scene);
+
+    if(topX === undefined){
+        this.topX = -0.5;
+    }
+    else {
+        this.topX = topX;
+    }
+
+    if(topY === undefined){
+        this.topY = -0.5;
+    }
+    else {
+        this.topY = topY;
+    }
+
+    if(botX === undefined){
+        this.botX = 0.5;
+    }
+    else {
+        this.botX = botX;
+    }
+
+    if(botY === undefined){
+        this.botY = 0.5;
+    }
+    else {
+        this.botY = botY;
+    }
 
     if(minS === undefined){
         this.minS = 0;
@@ -37,10 +65,10 @@ MyRectangle.prototype.constructor = MyRectangle;
 
 MyRectangle.prototype.initBuffers = function () {
     this.vertices = [
-        -0.5	, 	0.5		, 	0	,	// 0
-        0.5		, 	0.5		, 	0	,	// 1
-        -0.5	, 	-0.5	, 	0	,	// 2
-        0.5		, 	-0.5	, 	0		// 3
+        this.topX	, 	this.topY	, 	0	,	// 0
+        this.botX   , 	this.topY	, 	0	,	// 1
+        this.topX	, 	this.botY	, 	0	,	// 2
+        this.botX	, 	this.botY	, 	0		// 3
     ];
 
     this.indices = [
@@ -48,7 +76,7 @@ MyRectangle.prototype.initBuffers = function () {
         1, 2, 3
     ];
 
-    this.primitiveType=this.scene.gl.TRIANGLES;
+    this.primitiveType = this.scene.gl.TRIANGLES;
 
     this.normals = [
         0	, 	0	, 	1	,	// 0

@@ -11,9 +11,7 @@ MySceneGraph.prototype.parseLSXNodes= function(rootElement) {
 
     var nodeList = [];
 
-    nodeList['root'] = elems[0].children[0].id; //TODO root
-    // iterate over every element
-    //console.log(elems[0].getElementsByTagName('NODE'));
+    nodeList['root'] = elems[0].children[0].id;
     var nModes = elems[0].children.length;
     for (var i = 1; i < nModes; i++)
     {
@@ -21,8 +19,6 @@ MySceneGraph.prototype.parseLSXNodes= function(rootElement) {
 
         nodeList[e.id] = this.parseLSXNode(e);
     }
-
-    console.log(nodeList)
 };
 
 MySceneGraph.prototype.parseLSXNode = function(element) {

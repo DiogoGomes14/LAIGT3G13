@@ -20,9 +20,7 @@ XMLscene.prototype.init = function (application) {
 	this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-
 	this.axis=new CGFaxis(this);
-    //console.log(this.axis);
 };
 
 XMLscene.prototype.initLights = function () {
@@ -95,6 +93,14 @@ XMLscene.prototype.onGraphLoaded = function () {
         this.graph.ilumination.background.a
     );
 
+    this.square = new MyRectangle(
+        this,
+        this.graph.leaves.rectangle.args[0],
+        this.graph.leaves.rectangle.args[1],
+        this.graph.leaves.rectangle.args[2],
+        this.graph.leaves.rectangle.args[3]
+    );
+
     this.axis = new CGFaxis(this,this.graph.initials.reference);
 };
 
@@ -130,6 +136,7 @@ XMLscene.prototype.display = function () {
                 this.lights[light].update();
             }
         }
+        this.square.display();
 	}
 
     this.shader.unbind();

@@ -22,7 +22,8 @@ serialInclude([
     'lsxParser/lsxMaterials.js',
     'lsxParser/lsxNodes.js',
     'lsxParser/lsxTextures.js',
-    'Node1.js',
+    'Node.js',
+    'primitives/MyRectangle.js',
 
 main=function()
 {

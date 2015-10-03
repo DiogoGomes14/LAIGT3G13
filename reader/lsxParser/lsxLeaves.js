@@ -21,9 +21,14 @@ MySceneGraph.prototype.parseLSXLeaves = function(rootElement) {
 
 MySceneGraph.prototype.parseLSXLeaf = function(element) {
     var leaf = [];
+    var tempArgs;
 
     leaf['type'] = this.reader.getString(element, 'type', true);
-    leaf['args'] = this.reader.getString(element, 'args', true);
+    tempArgs = this.reader.getString(element, 'args', true);
+    leaf['args'] = tempArgs.split(' ');
+    for(var i = 0; i < leaf['args'].length; i++){
+        leaf['args'][i] = parseFloat(leaf['args'][i]);
+    }
 
     return leaf;
 };
