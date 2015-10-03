@@ -5,18 +5,18 @@ function Node () {
     this.descendants = [];
 }
 
-Node.property.push = function(nodeName){
+Node.prototype.push = function(nodeName){
     this.descendants.push(nodeName);
 };
 
-Node.property.setMaterial = function(material){
+Node.prototype.setMaterial = function(material){
     this.material = material;
 };
 
-Node.property.setTexture = function(texture){
+Node.prototype.setTexture = function(texture){
     this.texture = texture;
 };
 
-Node.property.setMatrix = function(m){
+Node.prototype.setMatrix = function(m){
     this.m = mat4.clone(m);
 };

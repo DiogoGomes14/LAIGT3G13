@@ -1,4 +1,3 @@
-//TODO apply doubleside
 MySceneGraph.prototype.parseLSXIlumination= function(rootElement) {
 
     var elems = rootElement.getElementsByTagName('ILUMINATION');
