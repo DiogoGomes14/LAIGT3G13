@@ -15,6 +15,7 @@ serialInclude([
     '../lib/CGF.js',
     'XMLscene.js',
     'MySceneGraph.js',
+    'Node.js',
     'lsxParser/lsxIlumination.js',
     'lsxParser/lsxInitials.js',
     'lsxParser/lsxLeaves.js',
@@ -22,8 +23,10 @@ serialInclude([
     'lsxParser/lsxMaterials.js',
     'lsxParser/lsxNodes.js',
     'lsxParser/lsxTextures.js',
-    'Node.js',
+    'primitives/MyCylinder.js',
     'primitives/MyRectangle.js',
+    'primitives/MySphere.js',
+    'primitives/MyTriangle.js',
 
 main=function()
 {

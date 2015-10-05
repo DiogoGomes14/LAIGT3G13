@@ -1,61 +1,45 @@
 function MyRectangle(scene, topX, topY, botX, botY, minS, maxS, minT, maxT) {
     CGFobject.call(this,scene);
 
-    if(topX === undefined){
+    if(topX === undefined)
         this.topX = -0.5;
-    }
-    else {
+    else
         this.topX = topX;
-    }
 
-    if(topY === undefined){
+    if(topY === undefined)
         this.topY = -0.5;
-    }
-    else {
+    else
         this.topY = topY;
-    }
 
-    if(botX === undefined){
+    if(botX === undefined)
         this.botX = 0.5;
-    }
-    else {
+    else
         this.botX = botX;
-    }
 
-    if(botY === undefined){
+    if(botY === undefined)
         this.botY = 0.5;
-    }
-    else {
+    else
         this.botY = botY;
-    }
 
-    if(minS === undefined){
+    if(minS === undefined)
         this.minS = 0;
-    }
-    else {
+    else
         this.minS = minS;
-    }
 
-    if(maxS === undefined){
+    if(maxS === undefined)
         this.maxS = 1;
-    }
-    else {
+    else
         this.maxS = maxS;
-    }
 
-    if(minT === undefined){
+    if(minT === undefined)
         this.minT = 0;
-    }
-    else {
+    else
         this.minT = minT;
-    }
 
-    if(maxT === undefined){
+    if(maxT === undefined)
         this.maxT = 1;
-    }
-    else {
+    else
         this.maxT = maxT;
-    }
 
     this.initBuffers();
 }
@@ -65,10 +49,10 @@ MyRectangle.prototype.constructor = MyRectangle;
 
 MyRectangle.prototype.initBuffers = function () {
     this.vertices = [
-        this.topX	, 	this.topY	, 	0	,	// 0
-        this.botX   , 	this.topY	, 	0	,	// 1
-        this.topX	, 	this.botY	, 	0	,	// 2
-        this.botX	, 	this.botY	, 	0		// 3
+        this.topX, this.topY, 0,
+        this.botX, this.topY, 0,
+        this.topX, this.botY, 0,
+        this.botX, this.botY, 0
     ];
 
     this.indices = [
@@ -76,13 +60,11 @@ MyRectangle.prototype.initBuffers = function () {
         1, 2, 3
     ];
 
-    this.primitiveType = this.scene.gl.TRIANGLES;
-
     this.normals = [
-        0	, 	0	, 	1	,	// 0
-        0	, 	0	, 	1	,	// 1
-        0	, 	0	, 	1	,	// 2
-        0	, 	0	, 	1		// 3
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1,
+        0, 0, 1
     ];
 
     this.texCoords = [
@@ -91,6 +73,8 @@ MyRectangle.prototype.initBuffers = function () {
         this.minS, this.maxT,
         this.maxS, this.maxT
     ];
+
+    this.primitiveType = this.scene.gl.TRIANGLES;
 
     this.initGLBuffers();
 };

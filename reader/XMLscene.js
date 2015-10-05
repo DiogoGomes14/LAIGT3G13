@@ -50,7 +50,6 @@ XMLscene.prototype.setDefaultAppearance = function () {
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () {
-    //TODO apply doubleside from ilumination
 
     this.camera.near = this.graph.initials.frustum.near;
     this.camera.far = this.graph.initials.frustum.far;
@@ -93,12 +92,28 @@ XMLscene.prototype.onGraphLoaded = function () {
         this.graph.ilumination.background.a
     );
 
-    this.square = new MyRectangle(
+    this.rectangle = new MyRectangle(
         this,
         this.graph.leaves.rectangle.args[0],
         this.graph.leaves.rectangle.args[1],
         this.graph.leaves.rectangle.args[2],
         this.graph.leaves.rectangle.args[3]
+    );
+
+    this.cylinder = new MyCylinder(
+        this,
+        this.graph.leaves.cylinder.args[0],
+        this.graph.leaves.cylinder.args[1],
+        this.graph.leaves.cylinder.args[2],
+        this.graph.leaves.cylinder.args[3],
+        this.graph.leaves.cylinder.args[4]
+    );
+
+    this.sphere = new MySphere(
+        this,
+        this.graph.leaves.sphere.args[0],
+        this.graph.leaves.sphere.args[1],
+        this.graph.leaves.sphere.args[2]
     );
 
     this.axis = new CGFaxis(this,this.graph.initials.reference);
@@ -136,7 +151,9 @@ XMLscene.prototype.display = function () {
                 this.lights[light].update();
             }
         }
-        this.square.display();
+        //this.rectangle.display();
+        //this.cylinder.display();
+        this.sphere.display();
 	}
 
     this.shader.unbind();
