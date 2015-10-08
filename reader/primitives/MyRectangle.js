@@ -7,7 +7,7 @@ function MyRectangle(scene, topX, topY, botX, botY, minS, maxS, minT, maxT) {
         this.topX = topX;
 
     if(topY === undefined)
-        this.topY = -0.5;
+        this.topY = 0.5;
     else
         this.topY = topY;
 
@@ -17,7 +17,7 @@ function MyRectangle(scene, topX, topY, botX, botY, minS, maxS, minT, maxT) {
         this.botX = botX;
 
     if(botY === undefined)
-        this.botY = 0.5;
+        this.botY = -0.5;
     else
         this.botY = botY;
 
@@ -67,11 +67,20 @@ MyRectangle.prototype.initBuffers = function () {
         0, 0, 1
     ];
 
+    /*
     this.texCoords = [
         this.minS, this.minT,
         this.maxS, this.minT,
         this.minS, this.maxT,
         this.maxS, this.maxT
+    ];
+    */
+
+    this.texCoords = [
+        0, 0,
+        1, 0,
+        0, 1,
+        1, 1
     ];
 
     this.primitiveType = this.scene.gl.TRIANGLES;

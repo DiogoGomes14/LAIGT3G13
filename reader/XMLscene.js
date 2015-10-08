@@ -21,6 +21,8 @@ XMLscene.prototype.init = function (application) {
 
     this.axis = new CGFaxis(this);
 
+    this.enableTextures(true);
+
     this.a = 0;
 };
 
@@ -144,28 +146,27 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
 
                 if(descendantNode != undefined){
 
-                    if (descendantNode.texture == "clear"){
+                    if (descendantNode.texture === "clear"){
                         texture = "clear";
                     }
-                    else if (descendantNode.texture != "null"){
-                        var texIndex = this.lsxTextures.indexOf(descendantNode.texture); //procura textura
-                        if(texIndex != -1){
+                    else if (descendantNode.texture !== "null"){
+
+                        if(this.lsxTextures[descendantNode.texture] != undefined){
                             texture = descendantNode.texture;
                         }
                         else {
-                            console.error("There is no texture named " + descendantNode.texture + ". " +
-                                "This occurred in " + descendantName);
+                            console.error("There is no texture named " + descendantNode.texture + " (at " +
+                                descendantName + ").");
                         }
                     }
 
                     if(descendantNode.material != "null"){
-                        var matIndex = this.lsxMaterials.indexOf(descendantNode.material); //procura material
-                        if(matIndex != -1){
+                        if(this.lsxMaterials[descendantNode.material] != undefined){
                             material = descendantNode.material;
                         }
                         else {
-                            console.error("There is no material named " + descendantNode.material + ". " +
-                                "This occurred in " + descendantName);
+                            console.error("There is no material named " + descendantNode.material + " (at " +
+                                descendantName + ").");
                         }
                     }
 
@@ -184,16 +185,18 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
 };
 
 XMLscene.prototype.displayPrimitive = function (index, matrix, materialName, textureName) {
-    //TODO use the matrix of the upper node to display this primitive
+    /*
+    TODO need to add support for amplification factor in the textures.
+    TODO need to be able to choose the primitive based on the index of that object (maybe be changed to name).
+    TODO fix the cylinder to support different bottom and top heights, as well as fixing the textures.
+    TODO fix the sphere. Probably needs to be redone.
+    TODO add support for the triangle primitives. File is there but its incomplete.
+    TODO choose a scene to implement
+     */
+    var texture = this.lsxTextures[textureName].texture;
     var material = this.lsxMaterials[materialName];
-    var texture = this.lsxTextures[textureName];
-//TODO FIX THE textures
-    material.setTexture(texture.texture);
-    //console.log(material);
-    material.setTextureWrap ('REPEAT', 'REPEAT');
-    //this.lsxMaterials[material].;
-    //console.log(material, texture);
 
+    material.setTexture(texture);
 
     if(material == undefined){
         console.error("There is no material named A");
@@ -203,16 +206,11 @@ XMLscene.prototype.displayPrimitive = function (index, matrix, materialName, tex
         console.error("There is no texture named A");
     }
 
-
     this.pushMatrix();
-        texture.texture.bind();
-
         material.apply();
         this.multMatrix(matrix);
         this.rectangle.display();
     this.popMatrix();
-
-    //this.lsxTextures[texture].unbind();
 };
 
 XMLscene.prototype.display = function () {
@@ -246,16 +244,8 @@ XMLscene.prototype.display = function () {
                 this.lights[light].update();
             }
         }
-        //this.rectangle.display();
-        //this.multMatrix(this.graph["test"].m);
-        //this.cylinder.display();
-
-        //TODO find root and use it here
-
 
         //if(this.a == 0){
-            //console.log(this.lsxMaterials["table"]);
-            //console.log(this.lsxTextures);
             var rootName = this.graph["root"];
             if(rootName == undefined){
                 console.error("Couldn't find root in the nodes!!");
@@ -263,8 +253,6 @@ XMLscene.prototype.display = function () {
             var root = this.graph[rootName];
             this.displayGraph(rootName, root.m, root.material, root.texture);
         //} this.a++;
-        //this.multMatrix(this.graph["tableTop"].m);
-        //this.sphere.display();
     }
 
     this.shader.unbind();

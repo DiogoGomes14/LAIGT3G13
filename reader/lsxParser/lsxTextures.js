@@ -23,7 +23,7 @@ MySceneGraph.prototype.parseLSXTextures = function(rootElement) {
 MySceneGraph.prototype.parseLSXTexture = function(element) {
     var texture = [];
 
-    //texture['file'] = this.reader.getString(element.children[0], 'path', true);
+    texture['file'] = this.reader.getString(element.children[0], 'path', true);
     texture['texture'] = new CGFtexture(this.scene, this.reader.getString(element.children[0], 'path', true));
     texture['amp_factor'] = this.parseAmplificationFactor(element.children[1]);
 
