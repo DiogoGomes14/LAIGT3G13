@@ -1,11 +1,11 @@
-function MyCylinder(scene, heigth, botRadius, topRadius, slices, stacks) {
+function MyCylinder(scene, heigth, botRadius, topRadius, heightSections, ringsPerSection) {
     CGFobject.call(this, scene);
 
     this.height = heigth;
     this.botRadius = botRadius;
     this.topRadius = topRadius;
-    this.sections = slices;
-    this.rings = stacks;
+    this.sections = heightSections;
+    this.rings = ringsPerSection;
 
     this.initBuffers();
 }
@@ -15,15 +15,23 @@ MyCylinder.prototype.constructor = MyCylinder;
 
 MyCylinder.prototype.initBuffers = function () {
     var stacksWidth = 1/this.rings,
-        radius = this.botRadius,
-        rad = (2 * Math.PI) / this.sections;
+        heightDifference = this.topRadius - this.botRadius,
+        varRadius = heightDifference/this.sections, //variation of the radius per section
+        lowerHeight = this.botRadius > this.topRadius ? this.topRadius : this.botRadius,
+        angle = (2 * Math.PI) / this.sections,
+        sectionRadius;
 
     this.vertices = [];
     for (var i = 0; i < this.sections; i++) {
         for (var j = 0; j < this.rings + 1; j++) {
+
+            sectionRadius = this.topRadius - varRadius * j;
+
+            //i == 0 ? console.log(sectionRadius) : "";
+
             this.vertices.push(
-                radius * Math.cos(rad * i),
-                radius * Math.sin(rad * i),
+                sectionRadius * Math.cos(angle * i),
+                sectionRadius * Math.sin(angle * i),
                 j * stacksWidth - 0.5
             );
         }
@@ -53,9 +61,10 @@ MyCylinder.prototype.initBuffers = function () {
     this.normals = [];
     for (i = 0; i < this.sections; i++) {
         for (k = 0; k < this.rings + 1; k++){
+            sectionRadius = this.topRadius - varRadius * j;
             this.normals.push(
-                radius * Math.cos(rad * i),
-                radius * Math.sin(rad * i),
+                sectionRadius * Math.cos(angle * i),
+                sectionRadius * Math.sin(angle * i),
                 0
             );
         }

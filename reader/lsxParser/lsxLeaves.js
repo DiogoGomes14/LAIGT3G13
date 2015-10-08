@@ -8,14 +8,14 @@ MySceneGraph.prototype.parseLSXLeaves = function(rootElement) {
         return "either zero or more than one 'LEAVES' element found.";
     }
 
-    this.leaves = [];
+    this.scene.lsxLeaves = [];
     // iterate over every element
     var nLeaves = elems[0].children.length;
     for (var i=0; i < nLeaves; i++)
     {
         var e = elems[0].children[i];
 
-        this.leaves[e.id] = this.parseLSXLeaf(e);
+        this.scene.lsxLeaves[e.id] = this.parseLSXLeaf(e);
     }
 };
 

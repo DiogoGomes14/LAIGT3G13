@@ -1,4 +1,4 @@
-MySceneGraph.prototype.parseLSXNodes= function(rootElement) {
+MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
 
     var elems = rootElement.getElementsByTagName('NODES');
     if (elems == null) {
@@ -9,49 +9,70 @@ MySceneGraph.prototype.parseLSXNodes= function(rootElement) {
         return "either zero or more than one 'NODES' element found.";
     }
 
-    var nodeList = [];
-
-    nodeList['root'] = elems[0].children[0].id;
+    this['root'] = elems[0].children[0].id;
     var nModes = elems[0].children.length;
-    for (var i = 1; i < nModes; i++)
-    {
+    for (var i = 1; i < nModes; i++) {
         var e = elems[0].children[i];
 
-        nodeList[e.id] = this.parseLSXNode(e);
+        this.parseLSXNode(e);
     }
 };
 
-MySceneGraph.prototype.parseLSXNode = function(element) {
-    var node = [];
 
-    node['material'] = this.reader.getString(element.children[0], 'id', true);
-    node['texture'] = this.reader.getString(element.children[1], 'id', true);
-    var transformations = [];
+//TODO null on material and textures
+MySceneGraph.prototype.parseLSXNode = function (element) {
+    this[element.id] = new Node();
+    this[element.id].setMaterial(this.reader.getString(element.children[0], 'id', true));
+    this[element.id].setTexture(this.reader.getString(element.children[1], 'id', true));
+
+    var matrix = mat4.create();
+    mat4.identity(matrix);
     var i = 2;
-    while(1){
-        if(element.children[i].tagName === 'TRANSLATION'){
-            transformations.push(this.parseTranslate(element.children[i]));
-        } else if(element.children[i].tagName === 'ROTATION'){
-            transformations.push(this.parseRotation(element.children[i]));
-        } else if(element.children[i].tagName === 'SCALE'){
-            transformations.push(this.parseScale(element.children[i]));
+    while (1) {
+        if (element.children[i].tagName === 'TRANSLATION') {
+            var translate = this.parseTranslation(element.children[i]);
+            mat4.translate(
+                matrix,
+                matrix,
+                [
+                    translate.x,
+                    translate.y,
+                    translate.z
+                ]
+            );
+        } else if (element.children[i].tagName === 'ROTATION') {
+            var rotation = this.parseRotation(element.children[i]);
+            mat4.rotate(
+                matrix,
+                matrix,
+                rotation.angle * Math.PI / 180,
+                [
+                    rotation.axis == "x" ? 1 : 0,
+                    rotation.axis == "y" ? 1 : 0,
+                    rotation.axis == "z" ? 1 : 0
+                ]
+            );
+        } else if (element.children[i].tagName === 'SCALE') {
+            var scale = this.parseScale(element.children[i]);
+            mat4.scale(
+                matrix,
+                matrix,
+                [
+                    scale.sx,
+                    scale.sy,
+                    scale.sz
+                ]
+            );
         } else
             break;
         i++;
     }
-    node['transformations'] = transformations;
-    node['descendants'] = this.parseLSXDescendants(element.children[i]);
 
-    return node;
-};
+    this[element.id].setMatrix(matrix);
 
-MySceneGraph.prototype.parseLSXDescendants = function(element) {
-    var descendants = [];
-
-    var nDescendants = element.children.length;
-    for (var i = 0; i < nDescendants; i++) {;
-        descendants.push(this.reader.getString(element.children[i],'id', true));
+    var nDescendants = element.children[i].children.length;
+    for (var j = 0; j < nDescendants; j++) {
+        this[element.id].push(this.reader.getString(element.children[i].children[j], 'id', true));
     }
 
-    return descendants;
 };

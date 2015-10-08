@@ -1,4 +1,4 @@
-function MyRectangle(scene, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+function MyTriangle(scene, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
     CGFobject.call(this,scene);
 
     this.x1 = x1;
@@ -16,10 +16,10 @@ function MyRectangle(scene, x1, y1, z1, x2, y2, z2, x3, y3, z3) {
     this.initBuffers();
 }
 
-MyRectangle.prototype = Object.create(CGFobject.prototype);
-MyRectangle.prototype.constructor = MyRectangle;
+MyTriangle.prototype = Object.create(CGFobject.prototype);
+MyTriangle.prototype.constructor = MyRectangle;
 
-MyRectangle.prototype.initBuffers = function () {
+MyTriangle.prototype.initBuffers = function () {
     this.vertices = [
         this.x1, this.y1, this.z1,
         this.x2, this.y2, this.z2,

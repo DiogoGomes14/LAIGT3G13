@@ -8,14 +8,14 @@ MySceneGraph.prototype.parseLSXTextures = function(rootElement) {
         return "either zero or more than one 'TEXTURES' element found.";
     }
 
-    this.textures = [];
+    this.scene.lsxTextures = [];
     // iterate over every element
     var nTextures = elems[0].children.length;
     for (var i=0; i < nTextures; i++)
     {
         var e = elems[0].children[i];
 
-        this.textures[e.id] = this.parseLSXTexture(e);
+        this.scene.lsxTextures[e.id] = this.parseLSXTexture(e);
     }
 
 };
@@ -23,7 +23,8 @@ MySceneGraph.prototype.parseLSXTextures = function(rootElement) {
 MySceneGraph.prototype.parseLSXTexture = function(element) {
     var texture = [];
 
-    texture['file'] = this.reader.getString(element.children[0], 'path', true);
+    //texture['file'] = this.reader.getString(element.children[0], 'path', true);
+    texture['texture'] = new CGFtexture(this.scene, this.reader.getString(element.children[0], 'path', true));
     texture['amp_factor'] = this.parseAmplificationFactor(element.children[1]);
 
     return texture;
@@ -36,7 +37,7 @@ MySceneGraph.prototype.parseAmplificationFactor = function(element) {
     for(var e in arr){
         if(arr.hasOwnProperty(e)){
             if(typeof(arr[e]) != "number")
-                console.error('Error parsing ' + e + ' in parseTranslate');
+                console.error('Error parsing ' + e + ' in parseTranslation');
         }
     }
     return arr;

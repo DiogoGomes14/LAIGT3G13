@@ -1,4 +1,3 @@
-
 function XMLscene() {
     CGFscene.call(this);
 }
@@ -17,21 +16,22 @@ XMLscene.prototype.init = function (application) {
 
     this.gl.clearDepth(100.0);
     this.gl.enable(this.gl.DEPTH_TEST);
-	this.gl.enable(this.gl.CULL_FACE);
+    this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
 
-	this.axis=new CGFaxis(this);
+    this.axis = new CGFaxis(this);
+
+    this.a = 0;
 };
 
 XMLscene.prototype.initLights = function () {
 
     this.shader.bind();
 
-/*
-	this.lights[0].setPosition(2, 3, 3, 1);
-    this.lights[0].setDiffuse(1.0,1.0,1.0,1.0);
+
+    this.lights[0].setPosition(2, 3, 3, 1);
+    this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].update();
-*/
 
     this.shader.unbind();
 };
@@ -44,117 +44,228 @@ XMLscene.prototype.setDefaultAppearance = function () {
     this.setAmbient(0.2, 0.4, 0.8, 1.0);
     this.setDiffuse(0.2, 0.4, 0.8, 1.0);
     this.setSpecular(0.2, 0.4, 0.8, 1.0);
-    this.setShininess(10.0);	
+    this.setShininess(10.0);
 };
 
 // Handler called when the graph is finally loaded. 
 // As loading is asynchronous, this may be called already after the application has started the run loop
 XMLscene.prototype.onGraphLoaded = function () {
 
-    this.camera.near = this.graph.initials.frustum.near;
-    this.camera.far = this.graph.initials.frustum.far;
+    //INITIALS
+    this.camera.near = this.lsxInitials.frustum.near;
+    this.camera.far = this.lsxInitials.frustum.far;
 
+    this.pushMatrix();
     this.translate(
-        this.graph.initials.translate.x,
-        this.graph.initials.translate.y,
-        this.graph.initials.translate.z
+        this.lsxInitials.translation.x,
+        this.lsxInitials.translation.y,
+        this.lsxInitials.translation.z
     );
     this.rotate(
-        this.graph.initials.rotate1.axis,
-        this.graph.initials.rotate1.angle
+        this.lsxInitials.rotate1.axis,
+        this.lsxInitials.rotate1.angle
     );
     this.rotate(
-        this.graph.initials.rotate2.axis,
-        this.graph.initials.rotate2.angle
+        this.lsxInitials.rotate2.axis,
+        this.lsxInitials.rotate2.angle
     );
     this.rotate(
-        this.graph.initials.rotate3.axis,
-        this.graph.initials.rotate3.angle
+        this.lsxInitials.rotate3.axis,
+        this.lsxInitials.rotate3.angle
     );
     this.scale(
-        this.graph.initials.scale.sx,
-        this.graph.initials.scale.sy,
-        this.graph.initials.scale.sz
+        this.lsxInitials.scale.sx,
+        this.lsxInitials.scale.sy,
+        this.lsxInitials.scale.sz
     );
+    this.popMatrix();
 
-    this.lights = this.graph.lights;
+    this.axis = new CGFaxis(this, this.lsxInitials.reference);
 
+    //ILUMINATION
     this.setGlobalAmbientLight(
-        this.graph.ilumination.ambient.r,
-        this.graph.ilumination.ambient.g,
-        this.graph.ilumination.ambient.b,
-        this.graph.ilumination.ambient.a
+        this.lsxIlumination.ambient.r,
+        this.lsxIlumination.ambient.g,
+        this.lsxIlumination.ambient.b,
+        this.lsxIlumination.ambient.a
     );
     this.gl.clearColor(
-        this.graph.ilumination.background.r,
-        this.graph.ilumination.background.g,
-        this.graph.ilumination.background.b,
-        this.graph.ilumination.background.a
+        this.lsxIlumination.background.r,
+        this.lsxIlumination.background.g,
+        this.lsxIlumination.background.b,
+        this.lsxIlumination.background.a
     );
 
+
+    //LIGHTS
+    //this.lights = this.graph.lights;
+
+    //OBJECTS
     this.rectangle = new MyRectangle(
         this,
-        this.graph.leaves.rectangle.args[0],
-        this.graph.leaves.rectangle.args[1],
-        this.graph.leaves.rectangle.args[2],
-        this.graph.leaves.rectangle.args[3]
+        this.lsxLeaves["rectangle"].args[0],
+        this.lsxLeaves["rectangle"].args[1],
+        this.lsxLeaves["rectangle"].args[2],
+        this.lsxLeaves["rectangle"].args[3]
     );
 
     this.cylinder = new MyCylinder(
         this,
-        this.graph.leaves.cylinder.args[0],
-        this.graph.leaves.cylinder.args[1],
-        this.graph.leaves.cylinder.args[2],
-        this.graph.leaves.cylinder.args[3],
-        this.graph.leaves.cylinder.args[4]
+        this.lsxLeaves["cylinder"].args[0],
+        this.lsxLeaves["cylinder"].args[1],
+        this.lsxLeaves["cylinder"].args[2],
+        this.lsxLeaves["cylinder"].args[3],
+        this.lsxLeaves["cylinder"].args[4]
     );
 
     this.sphere = new MySphere(
         this,
-        this.graph.leaves.sphere.args[0],
-        this.graph.leaves.sphere.args[1],
-        this.graph.leaves.sphere.args[2]
+        this.lsxLeaves["sphere"].args[0],
+        this.lsxLeaves["sphere"].args[1],
+        this.lsxLeaves["sphere"].args[2]
     );
 
-    this.axis = new CGFaxis(this,this.graph.initials.reference);
+    //console.log(this.graph);
+};
+
+XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture) {
+    for(var descendantIndex in this.graph[nodeName].descendants){
+        if(this.graph[nodeName].descendants.hasOwnProperty(descendantIndex)){
+            var descendantName = this.graph[nodeName].descendants[descendantIndex];
+
+            var leafIndex = this.lsxLeaves[descendantName];
+
+            if(leafIndex != undefined){ //Its a leaf so draw this primitive
+                this.displayPrimitive(leafIndex, matrix, material, texture);
+            }
+            else {
+
+                var descendantNode = this.graph[descendantName];
+
+                if(descendantNode != undefined){
+
+                    if (descendantNode.texture == "clear"){
+                        texture = "clear";
+                    }
+                    else if (descendantNode.texture != "null"){
+                        var texIndex = this.lsxTextures.indexOf(descendantNode.texture); //procura textura
+                        if(texIndex != -1){
+                            texture = descendantNode.texture;
+                        }
+                        else {
+                            console.error("There is no texture named " + descendantNode.texture + ". " +
+                                "This occurred in " + descendantName);
+                        }
+                    }
+
+                    if(descendantNode.material != "null"){
+                        var matIndex = this.lsxMaterials.indexOf(descendantNode.material); //procura material
+                        if(matIndex != -1){
+                            material = descendantNode.material;
+                        }
+                        else {
+                            console.error("There is no material named " + descendantNode.material + ". " +
+                                "This occurred in " + descendantName);
+                        }
+                    }
+
+                    var newMatrix = mat4.create();
+                    mat4.multiply(newMatrix, matrix, descendantNode.m);
+
+                    this.displayGraph(descendantName, newMatrix, material, texture);
+                }
+                else{
+                    console.error("There is no node named " + descendantName + ". " +
+                        "The parent calling this node is " + nodeName);
+                }
+            }
+        }
+    }
+};
+
+XMLscene.prototype.displayPrimitive = function (index, matrix, materialName, textureName) {
+    //TODO use the matrix of the upper node to display this primitive
+    var material = this.lsxMaterials[materialName];
+    var texture = this.lsxTextures[textureName];
+//TODO FIX THE textures
+    material.setTexture(texture.texture);
+    //console.log(material);
+    material.setTextureWrap ('REPEAT', 'REPEAT');
+    //this.lsxMaterials[material].;
+    //console.log(material, texture);
+
+
+    if(material == undefined){
+        console.error("There is no material named A");
+    }
+
+    if(texture == undefined){
+        console.error("There is no texture named A");
+    }
+
+
+    this.pushMatrix();
+        texture.texture.bind();
+
+        material.apply();
+        this.multMatrix(matrix);
+        this.rectangle.display();
+    this.popMatrix();
+
+    //this.lsxTextures[texture].unbind();
 };
 
 XMLscene.prototype.display = function () {
-	// ---- BEGIN Background, camera and axis setup
+    // ---- BEGIN Background, camera and axis setup
     this.shader.bind();
-	
-	// Clear image and depth buffer everytime we update the scene
+
+    // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-	// Initialize Model-View matrix as identity (no transformation
-	this.updateProjectionMatrix();
+    // Initialize Model-View matrix as identity (no transformation
+    this.updateProjectionMatrix();
     this.loadIdentity();
 
-	// Apply transformations corresponding to the camera position relative to the origin
-	this.applyViewMatrix();
+    // Apply transformations corresponding to the camera position relative to the origin
+    this.applyViewMatrix();
 
-	// Draw axis
-	this.axis.display();
+    // Draw axis
+    this.axis.display();
 
-	this.setDefaultAppearance();
+    this.setDefaultAppearance();
 
-	// ---- END Background, camera and axis setup
+    // ---- END Background, camera and axis setup
 
-	// it is important that things depending on the proper loading of the graph
-	// only get executed after the graph has loaded correctly.
-	// This is one possible way to do it
-	if (this.graph.loadedOk)
-	{
-        for(var light in this.lights){
-            if(this.lights.hasOwnProperty(light)){
+    // it is important that things depending on the proper loading of the graph
+    // only get executed after the graph has loaded correctly.
+    // This is one possible way to do it
+    if (this.graph.loadedOk) {
+        for (var light in this.lights) {
+            if (this.lights.hasOwnProperty(light)) {
                 this.lights[light].update();
             }
         }
         //this.rectangle.display();
+        //this.multMatrix(this.graph["test"].m);
         //this.cylinder.display();
-        this.sphere.display();
-	}
+
+        //TODO find root and use it here
+
+
+        //if(this.a == 0){
+            //console.log(this.lsxMaterials["table"]);
+            //console.log(this.lsxTextures);
+            var rootName = this.graph["root"];
+            if(rootName == undefined){
+                console.error("Couldn't find root in the nodes!!");
+            }
+            var root = this.graph[rootName];
+            this.displayGraph(rootName, root.m, root.material, root.texture);
+        //} this.a++;
+        //this.multMatrix(this.graph["tableTop"].m);
+        //this.sphere.display();
+    }
 
     this.shader.unbind();
 };
