@@ -18,8 +18,6 @@ MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
     }
 };
 
-
-//TODO null on material and textures
 MySceneGraph.prototype.parseLSXNode = function (element) {
     this[element.id] = new Node();
     this[element.id].setMaterial(this.reader.getString(element.children[0], 'id', true));

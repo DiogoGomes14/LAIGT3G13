@@ -103,30 +103,89 @@ XMLscene.prototype.onGraphLoaded = function () {
     //this.lights = this.graph.lights;
 
     //OBJECTS
+    this.objects = [];
+    for(var leaf in this.lsxLeaves){
+        if(this.lsxLeaves.hasOwnProperty(leaf)){
+            if(this.lsxLeaves[leaf].type === "rectangle"){
+                this.objects[leaf] = new MyRectangle(
+                    this,
+                    [
+                        this.lsxLeaves[leaf].args[0],
+                        this.lsxLeaves[leaf].args[1]
+                    ],
+                    [
+                        this.lsxLeaves[leaf].args[2],
+                        this.lsxLeaves[leaf].args[3]
+                    ]
+                );
+            } else if(this.lsxLeaves[leaf].type === "cylinder"){
+                this.objects[leaf] = new MyCylinder(
+                    this,
+                    this.lsxLeaves[leaf].args[0],
+                    this.lsxLeaves[leaf].args[1],
+                    this.lsxLeaves[leaf].args[2],
+                    this.lsxLeaves[leaf].args[3],
+                    this.lsxLeaves[leaf].args[4]
+                );
+            } else if(this.lsxLeaves[leaf].type === "sphere"){
+                this.objects[leaf] = new MySphere(
+                    this,
+                    this.lsxLeaves[leaf].args[0],
+                    this.lsxLeaves[leaf].args[1],
+                    this.lsxLeaves[leaf].args[2]
+                );
+            } else if(this.lsxLeaves[leaf].type === "triangle"){
+                this.objects[leaf] = new MyTriangle(
+                    this,
+                    [
+                        this.lsxLeaves[leaf].args[0],
+                        this.lsxLeaves[leaf].args[1],
+                        this.lsxLeaves[leaf].args[2]
+                    ],
+                    [
+                        this.lsxLeaves[leaf].args[4],
+                        this.lsxLeaves[leaf].args[5],
+                        this.lsxLeaves[leaf].args[6]
+                    ],
+                    [
+                        this.lsxLeaves[leaf].args[8],
+                        this.lsxLeaves[leaf].args[9],
+                        this.lsxLeaves[leaf].args[10]
+                    ]
+                );
+            } else
+                console.error("there is no primitive type named " + leaf);
+        }
+    }
+    /*
     this.rectangle = new MyRectangle(
         this,
-        this.lsxLeaves["rectangle"].args[0],
-        this.lsxLeaves["rectangle"].args[1],
-        this.lsxLeaves["rectangle"].args[2],
-        this.lsxLeaves["rectangle"].args[3]
+        [
+            this.lsxLeaves["rec"].args[0],
+            this.lsxLeaves["rec"].args[1]
+        ],
+        [
+            this.lsxLeaves["rec"].args[2],
+            this.lsxLeaves["rec"].args[3]
+        ]
     );
 
     this.cylinder = new MyCylinder(
         this,
-        this.lsxLeaves["cylinder"].args[0],
-        this.lsxLeaves["cylinder"].args[1],
-        this.lsxLeaves["cylinder"].args[2],
-        this.lsxLeaves["cylinder"].args[3],
-        this.lsxLeaves["cylinder"].args[4]
+        this.lsxLeaves["cyl"].args[0],
+        this.lsxLeaves["cyl"].args[1],
+        this.lsxLeaves["cyl"].args[2],
+        this.lsxLeaves["cyl"].args[3],
+        this.lsxLeaves["cyl"].args[4]
     );
 
     this.sphere = new MySphere(
         this,
-        this.lsxLeaves["sphere"].args[0],
-        this.lsxLeaves["sphere"].args[1],
-        this.lsxLeaves["sphere"].args[2]
+        this.lsxLeaves["ball"].args[0],
+        this.lsxLeaves["ball"].args[1],
+        this.lsxLeaves["ball"].args[2]
     );
-
+*/
     //console.log(this.graph);
 };
 
@@ -135,10 +194,8 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
         if(this.graph[nodeName].descendants.hasOwnProperty(descendantIndex)){
             var descendantName = this.graph[nodeName].descendants[descendantIndex];
 
-            var leafIndex = this.lsxLeaves[descendantName];
-
-            if(leafIndex != undefined){ //Its a leaf so draw this primitive
-                this.displayPrimitive(leafIndex, matrix, material, texture);
+            if(this.lsxLeaves[descendantName] != undefined){ //Its a leaf so draw this primitive
+                this.displayPrimitive(descendantName, matrix, material, texture);
             }
             else {
 
@@ -184,32 +241,42 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
     }
 };
 
-XMLscene.prototype.displayPrimitive = function (index, matrix, materialName, textureName) {
+XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialName, textureName) {
     /*
-    TODO need to add support for amplification factor in the textures.
-    TODO need to be able to choose the primitive based on the index of that object (maybe be changed to name).
     TODO fix the cylinder to support different bottom and top heights, as well as fixing the textures.
     TODO fix the sphere. Probably needs to be redone.
-    TODO add support for the triangle primitives. File is there but its incomplete.
     TODO choose a scene to implement
-     */
+    TODO reformat the code to be simpler. Separate the parser in different objects. Lower priority.
+    */
     var texture = this.lsxTextures[textureName].texture;
     var material = this.lsxMaterials[materialName];
 
+    if(material == undefined){
+        console.error("Couldn't find material named " + materialName);
+    }
+    if(texture == undefined){
+        console.error("Couldn't find texture named " + textureName);
+    }
+
     material.setTexture(texture);
 
-    if(material == undefined){
-        console.error("There is no material named A");
+    //TODO need to add support for amplification factor in the textures.
+    // Almost done. Still needs more testing.
+    // May need to reset the texCoords after each iteration
+    if (this.lsxLeaves[primitiveName].type == "rectangle"){
+        this.objects[primitiveName].updateTexCoords(this.lsxTextures[textureName].amp_factor.s, this.lsxTextures[textureName].amp_factor.t);
+    } else if(this.lsxLeaves[primitiveName].type === "triangle") {
+        this.objects[primitiveName].updateTexCoords(this.lsxTextures[textureName].amp_factor.s, this.lsxTextures[textureName].amp_factor.t);
+    } else {
+        //idk if there is another primitive that needs to allow the change of texCoords
     }
 
-    if(texture == undefined){
-        console.error("There is no texture named A");
-    }
+    this.objects[primitiveName].updateTexCoordsGLBuffers();
 
     this.pushMatrix();
         material.apply();
         this.multMatrix(matrix);
-        this.rectangle.display();
+        this.objects[primitiveName].display();
     this.popMatrix();
 };
 

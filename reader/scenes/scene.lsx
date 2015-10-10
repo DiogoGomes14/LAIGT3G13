@@ -60,14 +60,14 @@
 
     <TEXTURES>
         <TEXTURE id="table">
-            <file path="../resources/images/table.png"/>
+            <file path="./scenes/resources/images/table.png"/>
             <!-- path to file -->
-            <amplif_factor s="0.5" t="2.0"/>
+            <amplif_factor s="0.5" t="0.5"/>
             <!-- x/s, y/t -->
         </TEXTURE>
 
         <TEXTURE id="wall">
-            <file path="../resources/images/wall.png"/>
+            <file path="./scenes/resources/images/wall.png"/>
             <!-- path to file -->
             <amplif_factor s="1.0" t="1.0"/>
             <!-- x/s, y/t -->
@@ -111,13 +111,13 @@
 
     <LEAVES>
         <!-- next lines define nodes of type leaf; they may be repeated, in any order, as necessary -->
-        <LEAF id="rectangle" type="rectangle" args="-0.5 0.5 0.5 -0.5"/>
+        <LEAF id="rec" type="rectangle" args="-0.5 0.5 0.5 -0.5"/>
         <!-- 2D coordinates for left-top and right-bottom vertices. -->
-        <LEAF id="cylinder" type="cylinder" args="1.0 1.0 1.0 4 1"/>
+        <LEAF id="cyl" type="cylinder" args="1.0 1.0 1.0 4 1"/>
         <!-- height, bottom radius, top radius, sections along height, parts per section -->
-        <LEAF id="sphere" type="sphere" args="0.5 12 12"/>
+        <LEAF id="ball" type="sphere" args="0.5 12 12"/>
         <!-- radius, parts along radius, parts per section -->
-        <LEAF id="triangle" type="triangle" args="0.0 1.0 0.0  0.0 0.0 0.0  1.0 0.0 0.0"/>
+        <LEAF id="tri" type="triangle" args="-0.5 0.0 0.0  0.0 1.0 0.0  0.5 0.0 0.0"/>
         <!-- coordinates of each vertex -->
         <LEAF id="cone" type="cylinder" args="1.0 0.5 0 60 12"/>
     </LEAVES>
@@ -257,7 +257,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -269,7 +269,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -281,7 +281,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -293,7 +293,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -305,7 +305,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -317,7 +317,7 @@
             <TRANSLATION x="0.0" y="0.0" z="0.5"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
 
@@ -329,7 +329,7 @@
             <ROTATION axis="y" angle="180.0"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="rectangle"/>
+                <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
     </NODES>
