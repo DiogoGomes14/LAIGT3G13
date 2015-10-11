@@ -18,12 +18,12 @@
     </INITIALS>
 
 
-    <ILUMINATION>
+    <ILLUMINATION>
         <ambient r="0.1" g="0.1" b="0.1" a="1.0"/>
         <!-- global ambient -->
         <background r="0.0" g="0.0" b="0.0" a="1.0"/>
         <!-- background color -->
-    </ILUMINATION>
+    </ILLUMINATION>
 
 
     <LIGHTS>
@@ -60,18 +60,48 @@
 
     <TEXTURES>
         <TEXTURE id="table">
-            <file path="./scenes/resources/images/table.png"/>
-            <!-- path to file -->
-            <amplif_factor s="0.5" t="0.5"/>
-            <!-- x/s, y/t -->
-        </TEXTURE>
-
-        <TEXTURE id="wall">
-            <file path="./scenes/resources/images/wall.png"/>
+            <file path="images/table.png"/>
             <!-- path to file -->
             <amplif_factor s="1.0" t="1.0"/>
             <!-- x/s, y/t -->
         </TEXTURE>
+
+        <TEXTURE id="wall">
+            <file path="images/wall.png"/>
+            <!-- path to file -->
+            <amplif_factor s="1.0" t="1.0"/>
+            <!-- x/s, y/t -->
+        </TEXTURE>
+
+        <TEXTURE id="board">
+            <file path="images/board.png"/>
+            <!-- path to file -->
+            <amplif_factor s="1.0" t="1.0"/>
+            <!-- x/s, y/t -->
+        </TEXTURE>
+
+        <TEXTURE id="stripes">
+            <file path="images/stripes.png"/>
+            <!-- path to file -->
+            <amplif_factor s="1.0" t="1.0"/>
+            <!-- x/s, y/t -->
+        </TEXTURE>
+
+        <TEXTURE id="floor">
+            <file path="images/floor.png"/>
+            <!-- path to file -->
+            <amplif_factor s="1.0" t="1.0"/>
+            <!-- x/s, y/t -->
+        </TEXTURE>
+
+        <TEXTURE id="slides">
+            <file path="images/slides.png"/>
+            <!-- path to file -->
+            <amplif_factor s="1.0" t="1.0"/>
+            <!-- x/s, y/t -->
+        </TEXTURE>
+
+
 
         <!-- NOTE: this block "TEXTURE" must be repeated as necessary with different "id" -->
 
@@ -113,13 +143,13 @@
         <!-- next lines define nodes of type leaf; they may be repeated, in any order, as necessary -->
         <LEAF id="rec" type="rectangle" args="-0.5 0.5 0.5 -0.5"/>
         <!-- 2D coordinates for left-top and right-bottom vertices. -->
-        <LEAF id="cyl" type="cylinder" args="1.0 1.0 1.0 4 1"/>
+        <LEAF id="cyl" type="cylinder" args="4.0 2.0 2.0 2 40"/>
         <!-- height, bottom radius, top radius, sections along height, parts per section -->
-        <LEAF id="ball" type="sphere" args="0.5 12 12"/>
+        <LEAF id="ball" type="sphere" args="0.5 60 60"/>
         <!-- radius, parts along radius, parts per section -->
         <LEAF id="tri" type="triangle" args="-0.5 0.0 0.0  0.0 1.0 0.0  0.5 0.0 0.0"/>
         <!-- coordinates of each vertex -->
-        <LEAF id="cone" type="cylinder" args="1.0 0.5 0 60 12"/>
+        <!--<LEAF id="cone" type="cylinder" args="1.0 0.5 0 60 12"/>-->
     </LEAVES>
 
 
@@ -135,7 +165,7 @@
             <MATERIAL id="table"/>
             <!-- declared material superimposes the material received from parent node -->
             <!-- id="null" maintains material from parent node        -->
-            <TEXTURE id="table"/>
+            <TEXTURE id="board"/>
             <!-- declared texture superimposes the texture received from parent node -->
             <!-- id="null" maintains texture from parent node       -->
             <!-- id="clear" clears texture declaration received from parent node      -->
@@ -147,11 +177,13 @@
 
             <!-- declaring descendents, ate least one node or one leaf must be present -->
             <DESCENDANTS>
-                <DESCENDANT id="tableTop"/>
+                <DESCENDANT id="ball"/>
+                <!-- <DESCENDANT id="rec"/> -->
+                <!-- <DESCENDANT id="tableTop"/> -->
                 <!-- "ss" is the identifier of a node or of leaf; -->
                 <!--     may be repeatad as necessary. It can refer an -->
                 <!--      identifier of another node, later defined in the lsx file. -->
-                <DESCENDANT id="tableLegs"/>
+                <!-- <DESCENDANT id="tableLegs"/> -->
             </DESCENDANTS>
 
         </NODE>

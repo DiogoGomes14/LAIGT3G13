@@ -2,8 +2,8 @@ function MySphere(scene, radius, rings, sections) {
     CGFobject.call(this, scene);
 
     this.radius = radius;
-    this.sections = sections;
-    this.rings = rings;
+    this.rings = sections;
+    this.parts = rings;
 
     this.initBuffers();
 }
@@ -33,58 +33,91 @@ MySphere.prototype.initBuffers = function () {
     }*/
 
 
-    var alpha = (2 * Math.PI) / this.sections,
-        beta = (2 * Math.PI) / this.rings;
+    var alpha = (2 * Math.PI) / this.rings,
+        beta = (2 * Math.PI) / this.parts;
 
     this.vertices = [];
-    for (var i = 0; i < this.sections; i++) {
-        for (var j = 0; j < this.rings + 1; j++) {
+    this.indices = [];
+    this.normals = [];
+    this.texCoords = [];
+
+
+    for (var ring = 0; ring < this.rings + 1; ring++) {
+        for (var part = 0; part < this.parts + 1; part++) {
+            /*console.log(
+                ring + ": \n" +
+                "x = " + (this.radius * Math.cos(alpha * ring) * Math.sin(beta * part)).toFixed(2),
+                "y = " + (this.radius * Math.sin(alpha * ring) * Math.sin(beta * part)).toFixed(2),
+                "z = " + (this.radius * Math.cos(beta * part)).toFixed(2)
+            );*/
+
             this.vertices.push(
-                this.radius * Math.cos(alpha * i) * Math.sin(beta * j),
-                this.radius * Math.sin(alpha * i) * Math.sin(beta * j),
-                this.radius * Math.cos(beta * j)
+                this.radius * Math.cos(alpha * ring) * Math.sin(beta * part),
+                this.radius * Math.sin(alpha * ring) * Math.sin(beta * part),
+                this.radius * Math.cos(beta * part)
+            );
+
+            // TODO fix
+            this.texCoords.push(
+                0.5 - 0.5 * Math.cos(alpha * ring) * Math.sin(beta * part),
+                0.5 - 0.5 * Math.sin(alpha * ring) * Math.sin(beta * part)
             );
         }
     }
 
-    var nVertices = this.vertices.length / 3;
+    this.normals = this.vertices.slice(0);
 
-    this.indices = [];
+    var nVertices = this.vertices.length / 3;
+    for (ring = 0; ring < this.rings; ring++) {
+        for (part = 0; part < this.parts; part++) {
+            var partN = (this.rings + 1) * part;
+            this.indices.push(
+                ring + partN,
+                ring + partN + 1,
+                ring + partN + this.parts + 2
+            );
+            this.indices.push(
+                (ring + partN + this.parts + 3) % nVertices,
+                (ring + partN + this.parts + 2) % nVertices,
+                (ring + partN + 1) % nVertices
+            );
+        }
+    }
+
+    //console.dir(this.vertices);
+
+/*
+    var nVertices = this.vertices.length / 3;
     for (i = 0; i < nVertices/2; i++) {
         this.indices.push(
             i % nVertices,
             (i + 1) % nVertices,
-            (i + this.rings + 2) % nVertices
+            (i + this.parts + 2) % nVertices
         );
         this.indices.push(
-            (i + this.rings + 3) % nVertices,
-            (i + this.rings + 2) % nVertices,
+            (i + this.parts + 3) % nVertices,
+            (i + this.parts + 2) % nVertices,
             (i + 1) % nVertices
         );
-
     }
 
-    this.normals = [];
-    this.normals = this.vertices.slice(0);
-
-    this.texCoords = [];
-    for (i = 0; i <= this.sections; i++) {
-        for (j = 0; j <= this.rings; j++) {
+    for (i = 0; i <= this.rings; i++) {
+        for (j = 0; j <= this.parts; j++) {
             this.texCoords.push(
                 0.5 - 0.5 * Math.cos(alpha * i) * Math.sin(beta * j),
                 0.5 - 0.5 * Math.sin(alpha * i) * Math.sin(beta * j)
             );
         }
     }
-
+*/
 
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
 };
 
 MySphere.prototype.pushIndices = function(r, s){
-    var curRow = r * this.sections;
-    var nextRow = (r+1) * this.sections;
+    var curRow = r * this.rings;
+    var nextRow = (r+1) * this.rings;
 
     this.indices.push(curRow + s);
     this.indices.push(nextRow + s);

@@ -4,7 +4,6 @@ function MyTriangle(scene, v1, v2, v3) {
     this.v1 = v1;
     this.v2 = v2;
     this.v3 = v3;
-    console.log(v1, v2, v3);
 
     this.a = Math.sqrt((v1[0] - v3[0]) * (v1[0] - v3[0]) +
         (v1[1] - v3[1]) * (v1[1] - v3[1]) +
@@ -25,9 +24,7 @@ function MyTriangle(scene, v1, v2, v3) {
     this.beta = Math.acos(this.cosBeta);
     this.alpha = Math.acos(this.cosAlpha);
     this.gamma = Math.acos(this.cosGamma);
-    //console.log(this.beta, this.alpha, this.gamma);
-    this.sum = this.beta + this.alpha + this.gamma;
-    console.log(this.sum, Math.PI);
+    this.sum = this.beta + this.alpha + this.gamma; //tem que ser "igual" a PI
 
     this.initBuffers();
 }
@@ -37,7 +34,6 @@ MyTriangle.prototype.constructor = MyRectangle;
 
 MyTriangle.prototype.initBuffers = function () {
     this.vertices = [
-        // Front face
         this.v1[0],this.v1[1],this.v1[2],
         this.v2[0],this.v2[1],this.v2[2],
         this.v3[0],this.v3[1],this.v3[2]
@@ -45,7 +41,6 @@ MyTriangle.prototype.initBuffers = function () {
     ];
 
     this.normals = [
-        // Front face
         0.0,  0.0,  1.0,
         0.0,  0.0,  1.0,
         0.0,  0.0,  1.0
@@ -54,7 +49,7 @@ MyTriangle.prototype.initBuffers = function () {
     this.updateTexCoords(1,1);
 
     this.indices = [
-        0, 1, 2
+        2, 1, 0
     ];
 
     this.primitiveType=this.scene.gl.TRIANGLE_STRIP;
@@ -62,7 +57,7 @@ MyTriangle.prototype.initBuffers = function () {
 
 };
 
-
+//TODO Fix this
 MyTriangle.prototype.updateTexCoords = function(amplifS, amplifT){
     this.texCoords = [
         (this.c - this.a * Math.cos(this.beta)) / amplifS, 0.0,

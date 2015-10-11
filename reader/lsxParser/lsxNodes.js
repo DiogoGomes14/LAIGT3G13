@@ -9,7 +9,8 @@ MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
         return "either zero or more than one 'NODES' element found.";
     }
 
-    this['root'] = elems[0].children[0].id;
+    this.nodes = [];
+    this.nodes['root'] = elems[0].children[0].id;
     var nModes = elems[0].children.length;
     for (var i = 1; i < nModes; i++) {
         var e = elems[0].children[i];
@@ -19,9 +20,9 @@ MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
 };
 
 MySceneGraph.prototype.parseLSXNode = function (element) {
-    this[element.id] = new Node();
-    this[element.id].setMaterial(this.reader.getString(element.children[0], 'id', true));
-    this[element.id].setTexture(this.reader.getString(element.children[1], 'id', true));
+    this.nodes[element.id] = new Node();
+    this.nodes[element.id].setMaterial(this.reader.getString(element.children[0], 'id', true));
+    this.nodes[element.id].setTexture(this.reader.getString(element.children[1], 'id', true));
 
     var matrix = mat4.create();
     mat4.identity(matrix);
@@ -66,11 +67,11 @@ MySceneGraph.prototype.parseLSXNode = function (element) {
         i++;
     }
 
-    this[element.id].setMatrix(matrix);
+    this.nodes[element.id].setMatrix(matrix);
 
     var nDescendants = element.children[i].children.length;
     for (var j = 0; j < nDescendants; j++) {
-        this[element.id].push(this.reader.getString(element.children[i].children[j], 'id', true));
+        this.nodes[element.id].push(this.reader.getString(element.children[i].children[j], 'id', true));
     }
 
 };

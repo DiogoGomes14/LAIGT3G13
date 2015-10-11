@@ -34,7 +34,7 @@ MySceneGraph.prototype.onXMLReady=function() {
 	}
 
 	this.loadedOk=true;
-	
+
 	// As the graph loaded ok, signal the scene so that any additional initialization depending on the graph can take place
 	this.scene.onGraphLoaded();
 };
@@ -42,30 +42,37 @@ MySceneGraph.prototype.onXMLReady=function() {
 MySceneGraph.prototype.parseLSX = function(rootElement) {
 	var error;
 	if(error = (this.parseInitials(rootElement) != null)){
+		console.log("1");
 		return error;
 	}
 
-	if(error = (this.parseLSXIlumination(rootElement) != null)){
+	if(error = (this.parseLSXIllumination(rootElement) != null)){
+		console.log("2");
 		return error;
 	}
 
 	if(error = (this.parseLSXLights(rootElement) != null)){
+		console.log("3");
 		return error;
 	}
 
 	if(error = (this.parseLSXTextures(rootElement) != null)){
+		console.log("4");
 		return error;
 	}
 
 	if(error = (this.parseLSXMaterials(rootElement) != null)){
+		console.log("5");
 		return error;
 	}
 
 	if(error = (this.parseLSXLeaves(rootElement) != null)){
+		console.log("6");
 		return error;
 	}
 
 	if(error = (this.parseLSXNodes(rootElement) != null)){
+		console.log("7");
 		return error;
 	}
 };

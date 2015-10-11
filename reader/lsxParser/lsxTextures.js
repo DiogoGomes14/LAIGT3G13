@@ -23,8 +23,8 @@ MySceneGraph.prototype.parseLSXTexture = function(element) {
     var texture = [];
 
     //TODO fix path of files
-    texture['file'] = this.reader.getString(element.children[0], 'path', true);
-    texture['texture'] = new CGFtexture(this.scene, this.reader.getString(element.children[0], 'path', true));
+    texture['file'] = this.parseFileLocation(element.children[0]);
+    texture['texture'] = new CGFtexture(this.scene, texture['file']);
     texture['amp_factor'] = this.parseAmplificationFactor(element.children[1]);
 
     return texture;
@@ -41,4 +41,16 @@ MySceneGraph.prototype.parseAmplificationFactor = function(element) {
         }
     }
     return arr;
+};
+
+MySceneGraph.prototype.parseFileLocation = function(element) {
+    var file;
+    file = this.reader.getString(element, 'path', true);
+    console.log(this.reader);
+    var temp = this.reader.xmlfile.substring(0, this.reader.xmlfile.lastIndexOf("/"));
+    file = temp + "/" +  file;
+
+    console.log(file);
+
+    return file;
 };
