@@ -47,7 +47,7 @@ MySceneGraph.prototype.parseLSXLights= function(rootElement) {
                 lightList[light].specular.b,
                 lightList[light].specular.a
             );
-            this.lights[i].setVisible(lightList[light].enable);
+            //this.lights[i].setVisible(lightList[light].enable);
             this.lights[i].enable();
             i++;
         }

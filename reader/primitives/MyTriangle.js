@@ -5,6 +5,8 @@ function MyTriangle(scene, v1, v2, v3) {
     this.v2 = v2;
     this.v3 = v3;
 
+    console.log(v1, v2, v3);
+
     this.a = Math.sqrt((v1[0] - v3[0]) * (v1[0] - v3[0]) +
         (v1[1] - v3[1]) * (v1[1] - v3[1]) +
         (v1[2] - v3[2]) * (v1[2] - v3[2]));
@@ -24,7 +26,11 @@ function MyTriangle(scene, v1, v2, v3) {
     this.beta = Math.acos(this.cosBeta);
     this.alpha = Math.acos(this.cosAlpha);
     this.gamma = Math.acos(this.cosGamma);
-    this.sum = this.beta + this.alpha + this.gamma; //tem que ser "igual" a PI
+    this.sum = this.beta + this.alpha + this.gamma;
+
+    if(Math.abs(this.sum - Math.PI) > 0.001){
+        console.error("This triangle is wrong. The sum of its internal angles are different from 180.");
+    }
 
     this.initBuffers();
 }
@@ -46,10 +52,10 @@ MyTriangle.prototype.initBuffers = function () {
         0.0,  0.0,  1.0
     ];
 
-    this.updateTexCoords(1,1);
+    this.defaultTexCoords();
 
     this.indices = [
-        2, 1, 0
+        0, 1, 2
     ];
 
     this.primitiveType=this.scene.gl.TRIANGLE_STRIP;
@@ -64,4 +70,9 @@ MyTriangle.prototype.updateTexCoords = function(amplifS, amplifT){
         0.0, 1 / amplifT,
         this.c / amplifS, 1.0 / amplifT
     ];
+};
+
+//TODO Fix this
+MyTriangle.prototype.defaultTexCoords = function(){
+    this.updateTexCoords(1,1);
 };

@@ -25,7 +25,7 @@ MySceneGraph.prototype.parseLSXLeaf = function(element) {
 
     leaf['type'] = this.reader.getString(element, 'type', true);
     tempArgs = this.reader.getString(element, 'args', true);
-    leaf['args'] = tempArgs.split(' ');
+    leaf['args'] = tempArgs.split(/\s+/);
     for(var i = 0; i < leaf['args'].length; i++){
         leaf['args'][i] = parseFloat(leaf['args'][i]);
     }

@@ -25,7 +25,7 @@ MyRectangle.prototype.initBuffers = function () {
         0.0,  0.0,  1.0
     ];
 
-    this.updateTexCoords(1.0, 1.0);
+    this.defaultTexCoords();
 
     this.indices = [
         1, 0, 3, 2
@@ -47,4 +47,8 @@ MyRectangle.prototype.updateTexCoords = function(amplifS, amplifT){
         0.0, 0.0,
         width / amplifS, 0.0
     ];
+};
+
+MyRectangle.prototype.defaultTexCoords = function(){
+    this.updateTexCoords(1.0, 1.0);
 };

@@ -56,7 +56,9 @@ XMLscene.prototype.onGraphLoaded = function () {
     this.camera.near = this.lsxInitials.frustum.near;
     this.camera.far = this.lsxInitials.frustum.far;
 
-    this.pushMatrix();
+
+
+
     this.translate(
         this.lsxInitials.translation.x,
         this.lsxInitials.translation.y,
@@ -79,9 +81,7 @@ XMLscene.prototype.onGraphLoaded = function () {
         this.lsxInitials.scale.sy,
         this.lsxInitials.scale.sz
     );
-    this.popMatrix();
 
-    this.axis = new CGFaxis(this, this.lsxInitials.reference);
 
     //ILLUMINATION
     this.setGlobalAmbientLight(
@@ -97,6 +97,7 @@ XMLscene.prototype.onGraphLoaded = function () {
         this.lsxIllumination.background.a
     );
 
+    this.axis = new CGFaxis(this, this.lsxInitials.reference);
 
     //LIGHTS
     //this.lights = this.graph.lights;
@@ -142,14 +143,14 @@ XMLscene.prototype.onGraphLoaded = function () {
                         this.lsxLeaves[leaf].args[2]
                     ],
                     [
+                        this.lsxLeaves[leaf].args[3],
                         this.lsxLeaves[leaf].args[4],
-                        this.lsxLeaves[leaf].args[5],
-                        this.lsxLeaves[leaf].args[6]
+                        this.lsxLeaves[leaf].args[5]
                     ],
                     [
-                        this.lsxLeaves[leaf].args[8],
-                        this.lsxLeaves[leaf].args[9],
-                        this.lsxLeaves[leaf].args[10]
+                        this.lsxLeaves[leaf].args[6],
+                        this.lsxLeaves[leaf].args[7],
+                        this.lsxLeaves[leaf].args[8]
                     ]
                 );
             } else
@@ -165,21 +166,21 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
         if(this.graph.nodes[nodeName].descendants.hasOwnProperty(descendantIndex)){
             var descendantName = this.graph.nodes[nodeName].descendants[descendantIndex];
 
-            if(this.lsxLeaves[descendantName] != undefined){ //Its a leaf so draw this primitive
+            if(this.lsxLeaves[descendantName] !== undefined){ //Its a leaf so draw this primitive
                 this.displayPrimitive(descendantName, matrix, material, texture);
             }
             else {
 
                 var descendantNode = this.graph.nodes[descendantName];
 
-                if(descendantNode != undefined){
+                if(descendantNode !== undefined){
 
                     if (descendantNode.texture === "clear"){
                         texture = "clear";
                     }
                     else if (descendantNode.texture !== "null"){
 
-                        if(this.lsxTextures[descendantNode.texture] != undefined){
+                        if(this.lsxTextures[descendantNode.texture] !== undefined){
                             texture = descendantNode.texture;
                         }
                         else {
@@ -188,8 +189,8 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
                         }
                     }
 
-                    if(descendantNode.material != "null"){
-                        if(this.lsxMaterials[descendantNode.material] != undefined){
+                    if(descendantNode.material !== "null"){
+                        if(this.lsxMaterials[descendantNode.material] !== undefined){
                             material = descendantNode.material;
                         }
                         else {
@@ -214,15 +215,19 @@ XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture)
 
 XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialName, textureName) {
     /*
-    TODO fix the sphere. Probably needs to be redone.
     TODO choose a scene to implement
     TODO reformat the code to be simpler. Separate the parser in different objects. Lower priority.
     TODO check the restrictions on the parser (specially the args of primitives)
+    TODO check if there isnt another parsed thing with the same id
+    TODO fix lighting
     */
 
-    //TODO choose what to do when there is no material (default material and texture implemented there)
+    if(textureName === "null" || textureName === "clear"){
+        //console.log(primitiveName);
+    }
+
     var material = this.lsxMaterials[materialName];
-    if(material == undefined){
+    if(material === undefined){
         console.error("Couldn't find material named " + materialName);
     }
 
@@ -233,8 +238,6 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
             console.error("Couldn't find texture named " + textureName);
         }
 
-        material.setTexture(texture);
-
         //TODO need to add support for amplification factor in the textures.
         // Almost done. Still needs more testing.
         // May need to reset the texCoords after each iteration
@@ -243,18 +246,26 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
         } else if(this.lsxLeaves[primitiveName].type === "triangle") {
             this.objects[primitiveName].updateTexCoords(this.lsxTextures[textureName].amp_factor.s, this.lsxTextures[textureName].amp_factor.t);
         } else {
-            //idk if there is another primitive that needs to allow the change of texCoords
+
         }
         this.objects[primitiveName].updateTexCoordsGLBuffers();
+    } else {
+        texture = null;
     }
 
-
+    material.setTexture(texture);
+    //console.log(material);
 
     this.pushMatrix();
         material.apply();
         this.multMatrix(matrix);
         this.objects[primitiveName].display();
     this.popMatrix();
+
+    if (this.lsxLeaves[primitiveName].type == "rectangle" || this.lsxLeaves[primitiveName].type === "triangle"){
+        this.objects[primitiveName].defaultTexCoords();
+        this.objects[primitiveName].updateTexCoordsGLBuffers();
+    }
 };
 
 XMLscene.prototype.display = function () {
