@@ -10,11 +10,13 @@ MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
     }
 
     this.nodes = [];
-    this.nodes['root'] = elems[0].children[0].id;
+    this['root'] = elems[0].children[0].id;
     var nModes = elems[0].children.length;
     for (var i = 1; i < nModes; i++) {
         var e = elems[0].children[i];
-
+        if(this.nodes[e] !== undefined){
+            console.error("Node " + e + " already exists");
+        }
         this.parseLSXNode(e);
     }
 };

@@ -14,7 +14,9 @@ MySceneGraph.prototype.parseLSXLeaves = function(rootElement) {
     for (var i=0; i < nLeaves; i++)
     {
         var e = elems[0].children[i];
-
+        if(this.scene.lsxLeaves[e] !== undefined){
+            console.error("Leaf " + e + " already exists");
+        }
         this.scene.lsxLeaves[e.id] = this.parseLSXLeaf(e);
     }
 };

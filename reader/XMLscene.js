@@ -162,6 +162,9 @@ XMLscene.prototype.onGraphLoaded = function () {
 };
 
 XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture) {
+    /*if(nodeName == "cube"){
+        console.log(texture);
+    }*/
     for(var descendantIndex in this.graph.nodes[nodeName].descendants){
         if(this.graph.nodes[nodeName].descendants.hasOwnProperty(descendantIndex)){
             var descendantName = this.graph.nodes[nodeName].descendants[descendantIndex];
@@ -222,16 +225,18 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
     TODO fix lighting
     */
 
+
+
     if(textureName === "null" || textureName === "clear"){
         //console.log(primitiveName);
     }
 
     var material = this.lsxMaterials[materialName];
     if(material === undefined){
-        console.error("Couldn't find material named " + materialName);
+        //console.error("Couldn't find material named " + materialName);
     }
 
-    if(textureName !== "null" && textureName !== "clear"){
+    if(!(textureName === "null" || textureName === "clear")){
         var texture = this.lsxTextures[textureName].texture;
 
         if(texture == undefined){
@@ -245,22 +250,27 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
             this.objects[primitiveName].updateTexCoords(this.lsxTextures[textureName].amp_factor.s, this.lsxTextures[textureName].amp_factor.t);
         } else if(this.lsxLeaves[primitiveName].type === "triangle") {
             this.objects[primitiveName].updateTexCoords(this.lsxTextures[textureName].amp_factor.s, this.lsxTextures[textureName].amp_factor.t);
-        } else {
-
         }
         this.objects[primitiveName].updateTexCoordsGLBuffers();
     } else {
         texture = null;
     }
 
-    material.setTexture(texture);
-    //console.log(material);
+
+
 
     this.pushMatrix();
-        material.apply();
+        if(material !== undefined){
+            material.setTexture(texture);
+            material.apply();
+        } else {
+            this.setDefaultAppearance();
+        }
         this.multMatrix(matrix);
         this.objects[primitiveName].display();
     this.popMatrix();
+
+    //material.setTexture(null);
 
     if (this.lsxLeaves[primitiveName].type == "rectangle" || this.lsxLeaves[primitiveName].type === "triangle"){
         this.objects[primitiveName].defaultTexCoords();
@@ -301,7 +311,7 @@ XMLscene.prototype.display = function () {
         }
 
         //if(this.a == 0){
-            var rootName = this.graph.nodes["root"];
+            var rootName = this.graph["root"];
             if(rootName == undefined){
                 console.error("Couldn't find root in the nodes!!");
             }

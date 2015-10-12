@@ -14,7 +14,9 @@ MySceneGraph.prototype.parseLSXTextures = function(rootElement) {
     for (var i=0; i < nTextures; i++)
     {
         var e = elems[0].children[i];
-
+        if(this.scene.lsxTextures[e] !== undefined){
+            console.error("Texture " + e + " already exists");
+        }
         this.scene.lsxTextures[e.id] = this.parseLSXTexture(e);
     }
 };

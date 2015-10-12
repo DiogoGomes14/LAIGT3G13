@@ -16,21 +16,6 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
     this.scene.lsxInitials['rotate1'] = this.parseRotation(elems[0].children[4]);
     this.scene.lsxInitials['scale'] = this.parseScale(elems[0].children[5]);
     this.scene.lsxInitials['reference'] = this.reader.getFloat(elems[0].children[6], 'length', true);
-    /*
-     this.lsxInitials = [];
-     this.lsxInitials.push(this.parseFrustum(elems[0].children[0]));
-     this.lsxInitials.push(this.parseTranslation(elems[0].children[1]));
-     this.lsxInitials.push(this.parseRotation(elems[0].children[2]));
-     this.lsxInitials.push(this.parseRotation(elems[0].children[3]));
-     this.lsxInitials.push(this.parseRotation(elems[0].children[4]));
-     this.lsxInitials.push(this.parseScale(elems[0].children[5]));
-     this.lsxInitials.push(this.parseReference(elems[0].children[6]));
-
-     this.camera = new CGFcamera(0.4, this.lsxInitials[0][0], this.lsxInitials[0][1], vec3.fromValues(this.lsxInitials[1][0], this.lsxInitials[1][1], this.lsxInitials[1][2]), vec3.fromValues(0, 0, 0));
-     this.camera.orbit(this.lsxInitials[2][0], this.lsxInitials[2][1]);
-     this.camera.orbit(this.lsxInitials[3][0], this.lsxInitials[3][1]);
-     this.camera.orbit(this.lsxInitials[4][0], this.lsxInitials[4][1]);
-     */
 };
 
 MySceneGraph.prototype.parseTranslation = function(element) {

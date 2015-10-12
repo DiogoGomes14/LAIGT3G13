@@ -15,7 +15,9 @@ MySceneGraph.prototype.parseLSXLights= function(rootElement) {
     for (var i=0; i < nLights; i++)
     {
         var e=elems[0].children[i];
-
+        if(lightList[e] !== undefined){
+            console.error("Light " + e + " already exists");
+        }
         lightList[e.id] = this.parseLSXLight(e);
     }
 
@@ -48,7 +50,9 @@ MySceneGraph.prototype.parseLSXLights= function(rootElement) {
                 lightList[light].specular.a
             );
             //this.lights[i].setVisible(lightList[light].enable);
-            this.lights[i].enable();
+            if(lightList[light].enable){
+                this.lights[i].enable();
+            }
             i++;
         }
     }

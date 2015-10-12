@@ -12,10 +12,10 @@ MyRectangle.prototype.constructor = MyRectangle;
 
 MyRectangle.prototype.initBuffers = function () {
     this.vertices = [
-        this.v1[0], this.v1[1], 0.0,
-        this.v2[0], this.v1[1], 0.0,
         this.v1[0], this.v2[1], 0.0,
-        this.v2[0], this.v2[1], 0.0
+        this.v2[0], this.v2[1], 0.0,
+        this.v1[0], this.v1[1], 0.0,
+        this.v2[0], this.v1[1], 0.0
     ];
 
     this.normals = [
@@ -25,30 +25,31 @@ MyRectangle.prototype.initBuffers = function () {
         0.0,  0.0,  1.0
     ];
 
-    this.defaultTexCoords();
+    this.updateTexCoords(1.0,1.0);
 
     this.indices = [
-        1, 0, 3, 2
+        0, 1, 2, 3
     ];
 
-    this.primitiveType=this.scene.gl.TRIANGLE_STRIP;
-    this.initGLBuffers();
+    console.log(this.texCoords);
 
+    this.primitiveType=this.scene.gl.TRIANGLE_STRIP;
     this.initGLBuffers();
 };
 
 MyRectangle.prototype.updateTexCoords = function(amplifS, amplifT){
     var width = this.v2[0] - this.v1[0];
-    var height= this.v2[1] - this.v1[1];
+    var height= this.v1[1] - this.v2[1];
 
     this.texCoords = [
-        0.0, height / amplifT,
-        width / amplifS, height / amplifT,
+        0.0, 1.0 * height / amplifT,
+        1.0 * width / amplifS, 1.0 * height / amplifT,
         0.0, 0.0,
-        width / amplifS, 0.0
+        1.0 * width / amplifS, 0.0
     ];
 };
 
 MyRectangle.prototype.defaultTexCoords = function(){
     this.updateTexCoords(1.0, 1.0);
+    this.updateTexCoordsGLBuffers();
 };

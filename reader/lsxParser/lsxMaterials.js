@@ -15,6 +15,9 @@ MySceneGraph.prototype.parseLSXMaterials = function(rootElement) {
     {
         var e = elems[0].children[i];
 
+        if(this.scene.lsxMaterials[e] !== undefined){
+            console.error("Material " + e + " already exists");
+        }
         this.scene.lsxMaterials[e.id] = this.parseLSXMaterial(e);
     }
 };
