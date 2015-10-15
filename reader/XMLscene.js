@@ -56,32 +56,80 @@ XMLscene.prototype.onGraphLoaded = function () {
     this.camera.near = this.lsxInitials.frustum.near;
     this.camera.far = this.lsxInitials.frustum.far;
 
-
-
-
-    this.translate(
-        this.lsxInitials.translation.x,
-        this.lsxInitials.translation.y,
-        this.lsxInitials.translation.z
+    this.initialMatrix = mat4.create();
+    mat4.identity(this.initialMatrix);
+    mat4.translate(
+        this.initialMatrix,
+        this.initialMatrix,
+        [
+            this.lsxInitials.translation.x,
+            this.lsxInitials.translation.y,
+            this.lsxInitials.translation.z
+        ]
     );
-    this.rotate(
+
+    mat4.rotate(
+        this.initialMatrix,
+        this.initialMatrix,
+        this.lsxInitials.rotate1.angle * Math.PI / 180,
+        [
+            this.lsxInitials.rotate1.axis == "x" ? 1 : 0,
+            this.lsxInitials.rotate1.axis == "y" ? 1 : 0,
+            this.lsxInitials.rotate1.axis == "z" ? 1 : 0
+        ]
+    );
+
+    mat4.rotate(
+        this.initialMatrix,
+        this.initialMatrix,
+        this.lsxInitials.rotate2.angle * Math.PI / 180,
+        [
+            this.lsxInitials.rotate2.axis == "x" ? 1 : 0,
+            this.lsxInitials.rotate2.axis == "y" ? 1 : 0,
+            this.lsxInitials.rotate2.axis == "z" ? 1 : 0
+        ]
+    );
+
+    mat4.rotate(
+        this.initialMatrix,
+        this.initialMatrix,
+        this.lsxInitials.rotate3.angle * Math.PI / 180,
+        [
+            this.lsxInitials.rotate3.axis == "x" ? 1 : 0,
+            this.lsxInitials.rotate3.axis == "y" ? 1 : 0,
+            this.lsxInitials.rotate3.axis == "z" ? 1 : 0
+        ]
+    );
+
+    mat4.scale(
+        this.initialMatrix,
+        this.initialMatrix,
+        [
+            this.lsxInitials.scale.sx,
+            this.lsxInitials.scale.sy,
+            this.lsxInitials.scale.sz
+        ]
+    );
+
+    /*
+    this.initialMatrix.rotate(
         this.lsxInitials.rotate1.axis,
         this.lsxInitials.rotate1.angle
     );
-    this.rotate(
+    this.initialMatrix.rotate(
         this.lsxInitials.rotate2.axis,
         this.lsxInitials.rotate2.angle
     );
-    this.rotate(
+    this.initialMatrix.rotate(
         this.lsxInitials.rotate3.axis,
         this.lsxInitials.rotate3.angle
     );
-    this.scale(
+    this.initialMatrix.scale(
         this.lsxInitials.scale.sx,
         this.lsxInitials.scale.sy,
         this.lsxInitials.scale.sz
     );
-
+*/
 
     //ILLUMINATION
     this.setGlobalAmbientLight(
@@ -266,6 +314,8 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
         } else {
             this.setDefaultAppearance();
         }
+
+        this.multMatrix(this.initialMatrix);
         this.multMatrix(matrix);
         this.objects[primitiveName].display();
     this.popMatrix();
@@ -303,6 +353,9 @@ XMLscene.prototype.display = function () {
     // it is important that things depending on the proper loading of the graph
     // only get executed after the graph has loaded correctly.
     // This is one possible way to do it
+
+
+
     if (this.graph.loadedOk) {
         for (var light in this.lights) {
             if (this.lights.hasOwnProperty(light)) {
