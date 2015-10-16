@@ -2,7 +2,7 @@
 
     <INITIALS>
         <frustum near="0.1" far="500.0"/>
-        <translation x="0.0" y="0.0" z="-300.0"/>
+        <translation x="0.0" y="0.0" z="0.0"/>
         <rotation axis="z" angle="0.0"/>
         <rotation axis="y" angle="0.0"/>
         <rotation axis="x" angle="0.0"/>
@@ -120,7 +120,7 @@
         <LEAF id="cyl" type="cylinder" args="1.0 0.5 0.5 2 12"/>
         <LEAF id="ball" type="sphere" args="0.5 48 48"/>
         <LEAF id="tri" type="triangle" args="0.0 0.0 0.0  0.433 0.25 0.0  0.5 0.0 0.0"/>
-        <!--<LEAF id="cone" type="cylinder" args="1.0 0.5 0 60 12"/>-->
+        <LEAF id="cone" type="cylinder" args="0.0 0.5 0 1 60"/>
     </LEAVES>
 
 
@@ -615,6 +615,7 @@
 
             <ROTATION axis="z" angle="45.0"/>
             <SCALE sx="1.0" sy="1.0" sz="20.0"/>
+            <ROTATION axis="x" angle="90.0"/>
 
             <DESCENDANTS>
                 <DESCENDANT id="cube"/>
@@ -706,6 +707,15 @@
 
             <DESCENDANTS>
                 <DESCENDANT id="rec"/>
+            </DESCENDANTS>
+        </NODE>
+
+        <NODE id="test">
+            <MATERIAL id="null"/>
+            <TEXTURE id="null"/>
+
+            <DESCENDANTS>
+                <DESCENDANT id="cone"/>
             </DESCENDANTS>
         </NODE>
     </NODES>

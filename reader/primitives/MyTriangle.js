@@ -43,10 +43,27 @@ MyTriangle.prototype.initBuffers = function () {
         this.v3[0], this.v3[1], this.v3[2]
     ];
 
+    var u = [
+        this.v2[0] - this.v1[0],
+        this.v2[1] - this.v1[1],
+        this.v2[2] - this.v1[2]
+    ];
+
+    var v = [
+        this.v3[0] - this.v1[0],
+        this.v3[1] - this.v1[1],
+        this.v3[2] - this.v1[2]
+    ];
+    var n = [
+        u[1] * v[2] - u[2] * v[1],
+        u[2] * v[0] - u[0] * v[2],
+        u[0] * v[1] - u[1] * v[0]
+    ];
+
     this.normals = [
-        0.0,  0.0,  1.0,
-        0.0,  0.0,  1.0,
-        0.0,  0.0,  1.0
+        n[0], n[1], n[2],
+        n[0], n[1], n[2],
+        n[0], n[1], n[2]
     ];
 
     this.updateTexCoords(1.0,1.0);

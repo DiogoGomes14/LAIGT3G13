@@ -31,8 +31,6 @@ MyRectangle.prototype.initBuffers = function () {
         0, 1, 2, 3
     ];
 
-    console.log(this.texCoords);
-
     this.primitiveType=this.scene.gl.TRIANGLE_STRIP;
     this.initGLBuffers();
 };

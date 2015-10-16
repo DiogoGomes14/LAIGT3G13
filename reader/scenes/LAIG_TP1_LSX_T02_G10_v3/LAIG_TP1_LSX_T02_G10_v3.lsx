@@ -790,96 +790,96 @@
 
 	<NODE id="hole1">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />		
-		<TRANSLATION x="0.0" y="2.4" z="0.0" />								
+		<TEXTURE id="null" />
+		<TRANSLATION x="0.0" y="2.4" z="0.0" />
 		<DESCENDANTS>
-			<DESCENDANT id="corner_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="corner_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="hole2">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />			
-		<TRANSLATION x="4.775" y="2.4" z="0.0" />							
+		<TEXTURE id="null" />
+		<TRANSLATION x="4.775" y="2.4" z="0.0" />
 		<DESCENDANTS>
-			<DESCENDANT id="side_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="side_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="hole3">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />	
-		<TRANSLATION x="4.775" y="2.4" z="5.55" />								
+		<TEXTURE id="null" />
+		<TRANSLATION x="4.775" y="2.4" z="5.55" />
 		<DESCENDANTS>
-			<DESCENDANT id="side_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="side_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="hole4">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />	
+		<TEXTURE id="null" />
 		<TRANSLATION x="10.0" y="2.4" z="6.0" />
-		<ROTATION axis="y" angle="180" />								
+		<ROTATION axis="y" angle="180" />
 		<DESCENDANTS>
-			<DESCENDANT id="corner_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="corner_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="hole5">
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
-		<TRANSLATION x="10.0" y="2.4" z="0.0" />	
-		<ROTATION axis="y" angle="-90" />						
+		<TRANSLATION x="10.0" y="2.4" z="0.0" />
+		<ROTATION axis="y" angle="-90" />
 		<DESCENDANTS>
-			<DESCENDANT id="corner_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="corner_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="hole6">
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
 		<TRANSLATION x="0.0" y="2.4" z="6.0" />
-		<ROTATION axis="y" angle="90" />										
+		<ROTATION axis="y" angle="90" />
 		<DESCENDANTS>
-			<DESCENDANT id="corner_hole" />													
-		</DESCENDANTS>		
+			<DESCENDANT id="corner_hole" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="side_hole">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />			
-		<SCALE sx="0.45" sy="0.5" sz="0.45" />								
+		<TEXTURE id="null" />
+		<SCALE sx="0.45" sy="0.5" sz="0.45" />
 		<DESCENDANTS>
-			<DESCENDANT id="primitive_cube" />											
-		</DESCENDANTS>		
+			<DESCENDANT id="primitive_cube" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="corner_hole">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />								
+		<TEXTURE id="null" />
 		<DESCENDANTS>
 			<DESCENDANT id="corner_holeP1" />
-			<DESCENDANT id="corner_holeP2" />																
-		</DESCENDANTS>		
+			<DESCENDANT id="corner_holeP2" />
+		</DESCENDANTS>
 	</NODE>
-	
+
 		<NODE id="corner_holeP1">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />	
-		<TRANSLATION x="0.45" y="0.0" z="0.0" />		
-		<SCALE sx="0.3" sy="0.5" sz="0.45" />								
+		<TEXTURE id="null" />
+		<TRANSLATION x="0.45" y="0.0" z="0.0" />
+		<SCALE sx="0.3" sy="0.5" sz="0.45" />
 		<DESCENDANTS>
-			<DESCENDANT id="primitive_cube" />																
-		</DESCENDANTS>		
+			<DESCENDANT id="primitive_cube" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="corner_holeP2">
 		<MATERIAL id="null" />
-		<TEXTURE id="null" />			
-		<SCALE sx="0.45" sy="0.5" sz="0.75" />								
+		<TEXTURE id="null" />
+		<SCALE sx="0.45" sy="0.5" sz="0.75" />
 		<DESCENDANTS>
-			<DESCENDANT id="primitive_cube" />																
-		</DESCENDANTS>		
+			<DESCENDANT id="primitive_cube" />
+		</DESCENDANTS>
 	</NODE>
 
 	<NODE id="table_topBase">
@@ -897,11 +897,11 @@
       <TEXTURE id="table_wood" />
       <DESCENDANTS>
 	  	<DESCENDANT id="table_side_cl" />
-		<DESCENDANT id="table_side_rl" />	
-		<DESCENDANT id="table_side_rr" />	
-		<DESCENDANT id="table_side_cr" />	
+		<DESCENDANT id="table_side_rl" />
+		<DESCENDANT id="table_side_rr" />
+		<DESCENDANT id="table_side_cr" />
 		<DESCENDANT id="table_side_fr" />
-		<DESCENDANT id="table_side_fl" />		
+		<DESCENDANT id="table_side_fl" />
       </DESCENDANTS>
     </NODE>
 
@@ -961,7 +961,7 @@
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
 		<TRANSLATION x="5.225" y="2.4" z="5.55" />
-		<SCALE sx="4.025" sy="0.5" sz="0.45" />		
+		<SCALE sx="4.025" sy="0.5" sz="0.45" />
 		<DESCENDANTS>
 			<DESCENDANT id="primitive_cube" />
 		</DESCENDANTS>
@@ -1002,7 +1002,7 @@
 			<DESCENDANT id="table_leg" />
 		</DESCENDANTS>
 	</NODE>
-	
+
 	<NODE id="table_leg_fm">
       <MATERIAL id="null" />
       <TEXTURE id="null" />
@@ -1052,8 +1052,8 @@
 
      <NODE id="leg_baseP1.1">
       <MATERIAL id="null" />
-      <TEXTURE id="null" />  
-      <SCALE sx="-1.0" sy="1.0" sz="1.0" />   
+      <TEXTURE id="null" />
+      <SCALE sx="-1.0" sy="1.0" sz="1.0" />
       <DESCENDANTS>
         <DESCENDANT id="leg_base1" />
       </DESCENDANTS>
@@ -1061,7 +1061,7 @@
 
      <NODE id="leg_baseP1.2">
       <MATERIAL id="null" />
-      <TEXTURE id="null" />     
+      <TEXTURE id="null" />
       <DESCENDANTS>
         <DESCENDANT id="leg_base1" />
       </DESCENDANTS>
@@ -1081,7 +1081,7 @@
     <NODE id="leg_baseP2.1">
       <MATERIAL id="null" />
       <TEXTURE id="null" />
-      <SCALE sx="-1.0" sy="1.0" sz="1.0" /> 
+      <SCALE sx="-1.0" sy="1.0" sz="1.0" />
       <DESCENDANTS>
         <DESCENDANT id="leg_base2" />
       </DESCENDANTS>
@@ -1089,7 +1089,7 @@
 
     <NODE id="leg_baseP2.2">
       <MATERIAL id="null" />
-      <TEXTURE id="null" />     
+      <TEXTURE id="null" />
       <DESCENDANTS>
         <DESCENDANT id="leg_base2" />
       </DESCENDANTS>
@@ -1136,7 +1136,7 @@
 			<DESCENDANT id="myrectangle" />
 		</DESCENDANTS>
 	</NODE>
-    
+
 	<NODE id="primitive_cube_front">
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
@@ -1145,7 +1145,7 @@
 			<DESCENDANT id="myrectangle" />
 		</DESCENDANTS>
 	</NODE>
-    
+
 	<NODE id="primitive_cube_down">
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
@@ -1154,7 +1154,7 @@
 			<DESCENDANT id="myrectangle" />
 		</DESCENDANTS>
 	</NODE>
-    
+
 	<NODE id="primitive_cube_top">
 		<MATERIAL id="null" />
 		<TEXTURE id="null" />
