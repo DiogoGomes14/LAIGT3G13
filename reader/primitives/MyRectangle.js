@@ -46,8 +46,21 @@ MyRectangle.prototype.updateTexCoords = function(amplifS, amplifT){
         1.0 * width / amplifS, 0.0
     ];
 };
+/*
+MyRectangle.prototype.display1 = function(matrix, material, texture){
+    if(texture !== null){
+        this.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
+        this.updateTexCoordsGLBuffers();
+        texture = texture.texture;
+    }
 
-MyRectangle.prototype.defaultTexCoords = function(){
-    this.updateTexCoords(1.0, 1.0);
-    this.updateTexCoordsGLBuffers();
-};
+    this.scene.pushMatrix();
+        this.scene.multMatrix(this.scene.initialMatrix);
+        this.scene.multMatrix(matrix);
+        material.setTexture(texture);
+        material.apply();
+        this.scene.display();
+    this.scene.popMatrix();
+
+    material.setTexture(null);
+};*/

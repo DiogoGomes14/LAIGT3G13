@@ -34,10 +34,8 @@ XMLscene.prototype.init = function (application) {
     this.primitives = [];
     this.primitiveMatrix = [];
     this.types = [];
-    this.stupidTextures = [];
-    this.stupidMaterials = [];
-
-    this.a = 0;
+    this.sTextures = [];
+    this.sMaterials = [];
 };
 
 XMLscene.prototype.initLights = function () {
@@ -149,6 +147,7 @@ XMLscene.prototype.onGraphLoaded = function () {
     for(var leaf in this.lsxLeaves){
         if(this.lsxLeaves.hasOwnProperty(leaf)){
             if(this.lsxLeaves[leaf].type === "rectangle"){
+
                 this.objects[leaf] = new MyRectangle(
                     this,
                     [
@@ -160,7 +159,9 @@ XMLscene.prototype.onGraphLoaded = function () {
                         this.lsxLeaves[leaf].args[3]
                     ]
                 );
+
             } else if(this.lsxLeaves[leaf].type === "cylinder"){
+
                 this.objects[leaf] = new MyCylinder(
                     this,
                     this.lsxLeaves[leaf].args[0],
@@ -169,14 +170,18 @@ XMLscene.prototype.onGraphLoaded = function () {
                     this.lsxLeaves[leaf].args[3],
                     this.lsxLeaves[leaf].args[4]
                 );
+
             } else if(this.lsxLeaves[leaf].type === "sphere"){
+
                 this.objects[leaf] = new MySphere(
                     this,
                     this.lsxLeaves[leaf].args[0],
                     this.lsxLeaves[leaf].args[1],
                     this.lsxLeaves[leaf].args[2]
                 );
+
             } else if(this.lsxLeaves[leaf].type === "triangle"){
+
                 this.objects[leaf] = new MyTriangle(
                     this,
                     [
@@ -195,6 +200,7 @@ XMLscene.prototype.onGraphLoaded = function () {
                         this.lsxLeaves[leaf].args[8]
                     ]
                 );
+
             } else
                 console.error("there is no primitive type named " + leaf);
         }
@@ -206,14 +212,14 @@ XMLscene.prototype.onGraphLoaded = function () {
         console.error("Couldn't find root in the nodes!!");
     }
 
-    this.displayGraph(root, root.m, root.material, root.texture);
+    this.computeGraph(root, root.m, root.material, root.texture);
     console.dir(this.textures);
-    console.dir(this.stupidTextures);
+    console.dir(this.sTextures);
     console.dir(this.materials);
-    console.dir(this.stupidMaterials);
+    console.dir(this.sMaterials);
 };
 
-XMLscene.prototype.displayGraph = function (upperNode, matrix, material, texture) {
+XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture) {
     for(var descendantIndex in upperNode.descendants){
         if(upperNode.descendants.hasOwnProperty(descendantIndex)){
             var descendantName = upperNode.descendants[descendantIndex];
@@ -222,8 +228,13 @@ XMLscene.prototype.displayGraph = function (upperNode, matrix, material, texture
 
             if(leaf !== undefined){
                 var primitive = this.objects[descendantName];
-                var tex = this.lsxTextures[this.stupidTextures.pop()];
-                var mat = this.lsxMaterials[this.stupidMaterials.pop()];
+                var tex = this.lsxTextures[texture];
+                var mat = this.lsxMaterials[material];
+
+                /*
+                var tex = this.lsxTextures[this.sTextures.pop()];
+                var mat = this.lsxMaterials[this.sMaterials.pop()];
+                */
 
                 if(mat === undefined) {
                     mat = this.defaultMaterial;
@@ -264,13 +275,17 @@ XMLscene.prototype.displayGraph = function (upperNode, matrix, material, texture
                     var newMatrix = mat4.create();
                     mat4.multiply(newMatrix, matrix, node.m);
 
-                    this.stupidMaterials.push(material);
-                    this.stupidTextures.push(texture);
+                    /*
+                    this.sMaterials.push(material);
+                    this.sTextures.push(texture);
+                    */
 
-                    this.displayGraph(node, newMatrix, material, texture);
+                    this.computeGraph(node, newMatrix, material, texture);
 
-                    this.stupidMaterials.pop();
-                    this.stupidTextures.pop();
+                    /*
+                    this.sMaterials.pop();
+                    this.sTextures.pop();
+                    */
                 }
                 else{
                     console.error("There is no node named " + descendantName + ". " +
@@ -282,12 +297,7 @@ XMLscene.prototype.displayGraph = function (upperNode, matrix, material, texture
 };
 
 XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
-    /*
-    TODO reformat the code to be simpler. Separate the parser in different objects. Lower priority.
-    TODO check if there isnt another parsed thing with the same id
-    TODO fix lighting
-    TODO fix texture application
-    */
+    //TODO fix texture application
     if ((type === "rectangle" || type === "triangle") && texture != null){
         primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
         primitive.updateTexCoordsGLBuffers();
@@ -340,7 +350,6 @@ XMLscene.prototype.display = function () {
             }
         }
 
-        //if(this.a == 0){
         for(var i = 0; i < this.primitives.length; i++){
             this.displayPrimitive(
                 this.primitives[i],
@@ -350,8 +359,6 @@ XMLscene.prototype.display = function () {
                 this.types[i]
             );
         }
-
-        //} this.a++;
     }
 
     this.shader.unbind();
