@@ -33,6 +33,7 @@ XMLscene.prototype.init = function (application) {
     this.textures = [];
     this.primitives = [];
     this.primitiveMatrix = [];
+    this.types = [];
     this.stupidTextures = [];
     this.stupidMaterials = [];
 
@@ -199,117 +200,100 @@ XMLscene.prototype.onGraphLoaded = function () {
         }
     }
 
-    var rootName = this.graph["root"];
-    if(rootName == undefined){
+    var root = this.graph.nodes[this.graph["root"]];
+
+    if(root == undefined){
         console.error("Couldn't find root in the nodes!!");
     }
-    var root = this.graph.nodes[rootName];
 
-    this.displayGraph(rootName, root.m, root.material, root.texture);
-    console.dir(this.stupidTextures);
+    this.displayGraph(root, root.m, root.material, root.texture);
     console.dir(this.textures);
-    console.dir(this.stupidMaterials);
+    console.dir(this.stupidTextures);
     console.dir(this.materials);
+    console.dir(this.stupidMaterials);
 };
 
-XMLscene.prototype.displayGraph = function (nodeName, matrix, material, texture) {
-    for(var descendantIndex in this.graph.nodes[nodeName].descendants){
-        if(this.graph.nodes[nodeName].descendants.hasOwnProperty(descendantIndex)){
-            var descendantName = this.graph.nodes[nodeName].descendants[descendantIndex];
+XMLscene.prototype.displayGraph = function (upperNode, matrix, material, texture) {
+    for(var descendantIndex in upperNode.descendants){
+        if(upperNode.descendants.hasOwnProperty(descendantIndex)){
+            var descendantName = upperNode.descendants[descendantIndex];
 
-            if(this.lsxLeaves[descendantName] !== undefined){ //Its a leaf so draw this primitive
-                if(textureName != "null" && textureName != "clear"){
-                    //TODO
-                    var texture = this.lsxTextures[textureName].texture;
+            var leaf = this.lsxLeaves[descendantName];
 
-                    if(texture == undefined){
-                        console.error("Couldn't find texture named " + textureName);
-                    }
+            if(leaf !== undefined){
+                var primitive = this.objects[descendantName];
+                var tex = this.lsxTextures[this.stupidTextures.pop()];
+                var mat = this.lsxMaterials[this.stupidMaterials.pop()];
 
-                    if (this.lsxLeaves[primitiveName].type == "rectangle"){
-                        this.objects[primitiveName].updateTexCoords(
-                            this.lsxTextures[textureName].amp_factor.s,
-                            this.lsxTextures[textureName].amp_factor.t
-                        );
-                    } else if(this.lsxLeaves[primitiveName].type === "triangle") {
-                        this.objects[primitiveName].updateTexCoords(
-                            this.lsxTextures[textureName].amp_factor.s,
-                            this.lsxTextures[textureName].amp_factor.t
-                        );
-                    }
-                    //TODO
-                } else {
-                    texture = null;
+                if(mat === undefined) {
+                    mat = this.defaultMaterial;
                 }
 
-                this.primitives.push(descendantName);
+                if(tex === undefined){
+                    tex = null;
+                }
+
+                this.primitives.push(primitive);
                 this.primitiveMatrix.push(matrix);
-                this.materials.push(material);
-                this.textures.push(texture);
+                this.materials.push(mat);
+                this.textures.push(tex);
+                this.types.push(leaf.type);
             }
             else {
+                var node = this.graph.nodes[descendantName];
 
-                var descendantNode = this.graph.nodes[descendantName];
-
-                if(descendantNode !== undefined){
-
-                    if (descendantNode.texture === "clear"){
+                if(node !== undefined){
+                    if (node.texture === "clear"){
                         if(texture !== "clear"){
-                            this.stupidTextures.pop();
                             texture = "clear";
                         }
-                    }
-                    else if (descendantNode.texture !== "null"){
-
-                        if(this.lsxTextures[descendantNode.texture] !== undefined){
-                            texture = descendantNode.texture;
-                        }
-                        else {
-                            console.error("There is no texture named " + descendantNode.texture + " (at " +
-                                descendantName + ").");
-                        }
-                        this.stupidTextures.push(texture);
+                    } else if (node.texture !== "null"){
+                        if(this.lsxTextures[node.texture] !== undefined)
+                            texture = node.texture;
+                        else
+                            console.error("There is no texture named " + node.texture + " (at " + descendantName + ").");
                     }
 
-                    if(descendantNode.material !== "null"){
-                        if(this.lsxMaterials[descendantNode.material] !== undefined){
-                            material = descendantNode.material;
-                        }
-                        else {
-                            console.error("There is no material named " + descendantNode.material + " (at " +
-                                descendantName + ").");
-                        }
-                        this.stupidMaterials.push(material);
+                    if(node.material !== "null"){
+                        if(this.lsxMaterials[node.material] !== undefined)
+                            material = node.material;
+                        else
+                            console.error("There is no material named " + node.material + " (at " + descendantName + ").");
                     }
 
                     var newMatrix = mat4.create();
-                    mat4.multiply(newMatrix, matrix, descendantNode.m);
+                    mat4.multiply(newMatrix, matrix, node.m);
 
-                    this.displayGraph(descendantName, newMatrix, material, texture);
+                    this.stupidMaterials.push(material);
+                    this.stupidTextures.push(texture);
+
+                    this.displayGraph(node, newMatrix, material, texture);
+
+                    this.stupidMaterials.pop();
+                    this.stupidTextures.pop();
                 }
                 else{
                     console.error("There is no node named " + descendantName + ". " +
-                        "The parent calling this node is " + nodeName);
+                        "The parent calling this node is " + upperNode);
                 }
             }
         }
     }
 };
 
-XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialName, textureName) {
+XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
     /*
     TODO reformat the code to be simpler. Separate the parser in different objects. Lower priority.
     TODO check if there isnt another parsed thing with the same id
     TODO fix lighting
+    TODO fix texture application
     */
-
-
-
-
-    this.objects[primitiveName].updateTexCoordsGLBuffers();
-    var material = this.lsxMaterials[materialName];
-    if(material === undefined) {
-        material = this.defaultMaterial;
+    if ((type === "rectangle" || type === "triangle") && texture != null){
+        primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
+        primitive.updateTexCoordsGLBuffers();
+    }
+    if(texture != null){
+        texture = texture.texture;
     }
 
     this.pushMatrix();
@@ -317,13 +301,10 @@ XMLscene.prototype.displayPrimitive = function (primitiveName, matrix, materialN
         this.multMatrix(matrix);
         material.setTexture(texture);
         material.apply();
-        this.objects[primitiveName].display();
+        primitive.display();
     this.popMatrix();
 
-    if (this.lsxLeaves[primitiveName].type == "rectangle" || this.lsxLeaves[primitiveName].type === "triangle"){
-        this.objects[primitiveName].defaultTexCoords();
-    }
-    this.objects[primitiveName].updateTexCoordsGLBuffers();
+    material.setTexture(null);
 };
 
 XMLscene.prototype.display = function () {
@@ -365,7 +346,8 @@ XMLscene.prototype.display = function () {
                 this.primitives[i],
                 this.primitiveMatrix[i],
                 this.materials[i],
-                this.textures[i]
+                this.textures[i],
+                this.types[i]
             );
         }
 
