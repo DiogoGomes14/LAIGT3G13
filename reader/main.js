@@ -46,7 +46,7 @@ main=function()
 	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor) 
 	
 	//var filename=getUrlVars()['file'] || "demo.xml";
-    var filename=getUrlVars()['file'] || "scene.lsx";
+    var filename=getUrlVars()['file'] || "LAIG_TP1_LSX_T03_G13_v1/LAIG_TP1_LSX_T03_G13_v1.lsx";
 
 	// create and load graph, and associate it to scene. 
 	// Check console for loading errors
