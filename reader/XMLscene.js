@@ -34,8 +34,10 @@ XMLscene.prototype.init = function (application) {
     this.primitives = [];
     this.primitiveMatrix = [];
     this.types = [];
-    this.sTextures = [];
-    this.sMaterials = [];
+
+
+    //this.sTextures = [];
+    //this.sMaterials = [];
 };
 
 XMLscene.prototype.initLights = function () {
@@ -213,10 +215,10 @@ XMLscene.prototype.onGraphLoaded = function () {
     }
 
     this.computeGraph(root, root.m, root.material, root.texture);
-    console.dir(this.textures);
+    /*console.dir(this.textures);
     console.dir(this.sTextures);
     console.dir(this.materials);
-    console.dir(this.sMaterials);
+    console.dir(this.sMaterials);*/
 };
 
 XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture) {
@@ -226,7 +228,7 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
 
             var leaf = this.lsxLeaves[descendantName];
 
-            if(leaf !== undefined){
+            if(leaf !== undefined){ //This node is a leaf so push its transformations and appearance
                 var primitive = this.objects[descendantName];
                 var tex = this.lsxTextures[texture];
                 var mat = this.lsxMaterials[material];
@@ -250,28 +252,29 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
                 this.textures.push(tex);
                 this.types.push(leaf.type);
             }
-            else {
+            else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
                 var node = this.graph.nodes[descendantName];
 
-                if(node !== undefined){
-                    if (node.texture === "clear"){
+                if(node !== undefined){ //There is a node
+                    if (node.texture === "clear"){ // Ignore the texture from the parent
                         if(texture !== "clear"){
                             texture = "clear";
                         }
-                    } else if (node.texture !== "null"){
-                        if(this.lsxTextures[node.texture] !== undefined)
+                    } else if (node.texture !== "null"){ //Change the texture to this node texture
+                        if(this.lsxTextures[node.texture] !== undefined) //if the texture is found
                             texture = node.texture;
                         else
                             console.error("There is no texture named " + node.texture + " (at " + descendantName + ").");
                     }
 
-                    if(node.material !== "null"){
+                    if(node.material !== "null"){ //Change the material to this node material
                         if(this.lsxMaterials[node.material] !== undefined)
                             material = node.material;
                         else
                             console.error("There is no material named " + node.material + " (at " + descendantName + ").");
                     }
 
+                    // multiply the matrix of the upperNode by this node matrix
                     var newMatrix = mat4.create();
                     mat4.multiply(newMatrix, matrix, node.m);
 
@@ -280,6 +283,7 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
                     this.sTextures.push(texture);
                     */
 
+                    //calculate the transformations of the descendants of node
                     this.computeGraph(node, newMatrix, material, texture);
 
                     /*
@@ -297,7 +301,10 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
 };
 
 XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
-    //TODO fix texture application
+    //TODO fix texture application (with a stack, using push and pop)
+    //When an object is supposed to have no texture, the last one used is applied on this object
+
+    //only change the amplification factor of the primitives of type rectangle or triangle
     if ((type === "rectangle" || type === "triangle") && texture != null){
         primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
         primitive.updateTexCoordsGLBuffers();
@@ -306,6 +313,7 @@ XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, tex
         texture = texture.texture;
     }
 
+    //draw the primitive with the calculated transformations/appearance
     this.pushMatrix();
         this.multMatrix(this.initialMatrix);
         this.multMatrix(matrix);
@@ -314,6 +322,7 @@ XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, tex
         primitive.display();
     this.popMatrix();
 
+    //reset the texture of the appearance
     material.setTexture(null);
 };
 
@@ -350,6 +359,7 @@ XMLscene.prototype.display = function () {
             }
         }
 
+        //display each primitive with the appropriate transformations/appearance
         for(var i = 0; i < this.primitives.length; i++){
             this.displayPrimitive(
                 this.primitives[i],
