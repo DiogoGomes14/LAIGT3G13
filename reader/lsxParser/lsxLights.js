@@ -19,6 +19,9 @@ MySceneGraph.prototype.parseLSXLights= function(rootElement) {
             console.error("Light " + e + " already exists");
         }
         lightList[e.id] = this.parseLSXLight(e);
+
+
+
     }
 
     this.lights = this.scene.lights;
@@ -49,10 +52,16 @@ MySceneGraph.prototype.parseLSXLights= function(rootElement) {
                 lightList[light].specular.b,
                 lightList[light].specular.a
             );
-            //this.lights[i].setVisible(lightList[light].enable);
+            this.lights[i].name = light;
+
             if(lightList[light].enable){
+                this.scene[light] = true;
                 this.lights[i].enable();
+            } else {
+                this.scene[light] = false;
             }
+
+            this.scene.application.interface.addLightsSwitch(light);
             i++;
         }
     }

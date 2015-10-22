@@ -8,6 +8,7 @@ XMLscene.prototype.constructor = XMLscene;
 XMLscene.prototype.init = function (application) {
     CGFscene.prototype.init.call(this, application);
 
+    this.application = application;
     this.initCameras();
 
     this.initLights();
@@ -34,10 +35,6 @@ XMLscene.prototype.init = function (application) {
     this.primitives = [];
     this.primitiveMatrix = [];
     this.types = [];
-
-
-    //this.sTextures = [];
-    //this.sMaterials = [];
 };
 
 XMLscene.prototype.initLights = function () {
@@ -141,9 +138,6 @@ XMLscene.prototype.onGraphLoaded = function () {
 
     this.axis = new CGFaxis(this, this.lsxInitials.reference);
 
-    //LIGHTS
-    //this.lights = this.graph.lights;
-
     //OBJECTS
     this.objects = [];
     for(var leaf in this.lsxLeaves){
@@ -215,16 +209,31 @@ XMLscene.prototype.onGraphLoaded = function () {
     }
 
     this.computeGraph(root, root.m, root.material, root.texture);
-    /*console.dir(this.textures);
-    console.dir(this.sTextures);
-    console.dir(this.materials);
-    console.dir(this.sMaterials);*/
 };
 
-XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture) {
-    for(var descendantIndex in upperNode.descendants){
-        if(upperNode.descendants.hasOwnProperty(descendantIndex)){
-            var descendantName = upperNode.descendants[descendantIndex];
+XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
+
+    if (node.texture === "clear") { // Ignore the texture from the parent
+        if (texture !== "clear") {
+            texture = "clear";
+        }
+    } else if (node.texture !== "null") { //Change the texture to this node texture
+        if (this.lsxTextures[node.texture] !== undefined) //if the texture is found
+            texture = node.texture;
+        else
+            console.error("There is no texture named " + node.texture + ".");
+    }
+
+    if (node.material !== "null") { //Change the material to this node material
+        if (this.lsxMaterials[node.material] !== undefined)
+            material = node.material;
+        else
+            console.error("There is no material named " + node.material + ".");
+    }
+
+    for(var descendantIndex in node.descendants){
+        if(node.descendants.hasOwnProperty(descendantIndex)){
+            var descendantName = node.descendants[descendantIndex];
 
             var leaf = this.lsxLeaves[descendantName];
 
@@ -232,11 +241,6 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
                 var primitive = this.objects[descendantName];
                 var tex = this.lsxTextures[texture];
                 var mat = this.lsxMaterials[material];
-
-                /*
-                var tex = this.lsxTextures[this.sTextures.pop()];
-                var mat = this.lsxMaterials[this.sMaterials.pop()];
-                */
 
                 if(mat === undefined) {
                     mat = this.defaultMaterial;
@@ -253,47 +257,19 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
                 this.types.push(leaf.type);
             }
             else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
-                var node = this.graph.nodes[descendantName];
+                var nodeDesc = this.graph.nodes[descendantName];
 
-                if(node !== undefined){ //There is a node
-                    if (node.texture === "clear"){ // Ignore the texture from the parent
-                        if(texture !== "clear"){
-                            texture = "clear";
-                        }
-                    } else if (node.texture !== "null"){ //Change the texture to this node texture
-                        if(this.lsxTextures[node.texture] !== undefined) //if the texture is found
-                            texture = node.texture;
-                        else
-                            console.error("There is no texture named " + node.texture + " (at " + descendantName + ").");
-                    }
-
-                    if(node.material !== "null"){ //Change the material to this node material
-                        if(this.lsxMaterials[node.material] !== undefined)
-                            material = node.material;
-                        else
-                            console.error("There is no material named " + node.material + " (at " + descendantName + ").");
-                    }
+                if(nodeDesc !== undefined){ //There is a node
 
                     // multiply the matrix of the upperNode by this node matrix
                     var newMatrix = mat4.create();
-                    mat4.multiply(newMatrix, matrix, node.m);
+                    mat4.multiply(newMatrix, matrix, nodeDesc.m);
 
-                    /*
-                    this.sMaterials.push(material);
-                    this.sTextures.push(texture);
-                    */
-
-                    //calculate the transformations of the descendants of node
-                    this.computeGraph(node, newMatrix, material, texture);
-
-                    /*
-                    this.sMaterials.pop();
-                    this.sTextures.pop();
-                    */
+                    this.computeGraph(nodeDesc, newMatrix, material, texture);
                 }
                 else{
                     console.error("There is no node named " + descendantName + ". " +
-                        "The parent calling this node is " + upperNode);
+                        "The parent calling this node is " + node);
                 }
             }
         }
@@ -301,8 +277,6 @@ XMLscene.prototype.computeGraph = function (upperNode, matrix, material, texture
 };
 
 XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
-    //TODO fix texture application (with a stack, using push and pop)
-    //When an object is supposed to have no texture, the last one used is applied on this object
 
     //only change the amplification factor of the primitives of type rectangle or triangle
     if ((type === "rectangle" || type === "triangle") && texture != null){
@@ -355,6 +329,13 @@ XMLscene.prototype.display = function () {
     if (this.graph.loadedOk) {
         for (var light in this.lights) {
             if (this.lights.hasOwnProperty(light)) {
+
+                if(this[this.lights[light].name]){ //if the check on the gui is true, enable light, else disable
+                    this.lights[light].enable();
+                } else {
+                    this.lights[light].disable();
+                }
+
                 this.lights[light].update();
             }
         }
