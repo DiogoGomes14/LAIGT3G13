@@ -82,11 +82,11 @@ XMLscene.prototype.onGraphLoaded = function () {
     mat4.rotate(
         this.initialMatrix,
         this.initialMatrix,
-        this.lsxInitials.rotate1.angle * Math.PI / 180,
+        this.lsxInitials.rotate3.angle * Math.PI / 180,
         [
-            this.lsxInitials.rotate1.axis == "x" ? 1 : 0,
-            this.lsxInitials.rotate1.axis == "y" ? 1 : 0,
-            this.lsxInitials.rotate1.axis == "z" ? 1 : 0
+            this.lsxInitials.rotate3.axis == "x" ? 1 : 0,
+            this.lsxInitials.rotate3.axis == "y" ? 1 : 0,
+            this.lsxInitials.rotate3.axis == "z" ? 1 : 0
         ]
     );
 
@@ -104,11 +104,11 @@ XMLscene.prototype.onGraphLoaded = function () {
     mat4.rotate(
         this.initialMatrix,
         this.initialMatrix,
-        this.lsxInitials.rotate3.angle * Math.PI / 180,
+        this.lsxInitials.rotate1.angle * Math.PI / 180,
         [
-            this.lsxInitials.rotate3.axis == "x" ? 1 : 0,
-            this.lsxInitials.rotate3.axis == "y" ? 1 : 0,
-            this.lsxInitials.rotate3.axis == "z" ? 1 : 0
+            this.lsxInitials.rotate1.axis == "x" ? 1 : 0,
+            this.lsxInitials.rotate1.axis == "y" ? 1 : 0,
+            this.lsxInitials.rotate1.axis == "z" ? 1 : 0
         ]
     );
 
@@ -330,7 +330,8 @@ XMLscene.prototype.display = function () {
         for (var light in this.lights) {
             if (this.lights.hasOwnProperty(light)) {
 
-                if(this[this.lights[light].name]){ //if the check on the gui is true, enable light, else disable
+                //if the check on the gui is true, enable light, else disable
+                if(this[this.lights[light].name]){
                     this.lights[light].enable();
                 } else {
                     this.lights[light].disable();
