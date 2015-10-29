@@ -23,6 +23,7 @@ serialInclude([
     'lsxParser/lsxMaterials.js',
     'lsxParser/lsxNodes.js',
     'lsxParser/lsxTextures.js',
+    'lsxParser/lsxAnimations.js',
     'primitives/MyCylinder.js',
     'primitives/MyRectangle.js',
     'primitives/MySphere.js',

@@ -114,6 +114,17 @@
         </MATERIAL>
     </MATERIALS>
 
+    <ANIMATIONS>
+        <ANIMATION id="linear1" span="10" type="linear">
+            <controlpoint xx="0.0" yy="0.0" zz="0.0" />
+            <controlpoint xx="1.0" yy="0.0" zz="0.0" />
+            <controlpoint xx="1.0" yy="1.0" zz="0.0" />
+        </ANIMATION>
+
+        <ANIMATION id="circular1" span="20" type="circular" center="10.0 10.0 10.0" radius="5.0" startang="40" rotang="20" />
+    </ANIMATIONS>
+
+
 
     <LEAVES>
         <LEAF id="rec" type="rectangle" args="-0.5 0.5 0.5 -0.5"/>

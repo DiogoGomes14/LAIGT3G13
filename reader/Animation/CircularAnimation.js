@@ -6,7 +6,7 @@ function CircularAnimation(scene, duration, radius, center, initialAngle, rotati
     this.initialAngle = initialAngle;
     this.rotationAngle = rotationAngle;
 
-    this.deltaAngle = this.rotationAngle/this.duration;
+    this.angleVariation = this.rotationAngle/this.duration;
 }
 
 CircularAnimation.prototype = Object.create(Animation.prototype);

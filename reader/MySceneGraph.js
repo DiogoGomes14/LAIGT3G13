@@ -75,6 +75,11 @@ MySceneGraph.prototype.parseLSX = function(rootElement) {
 		console.log("7");
 		return error;
 	}
+
+	if(error = (this.parseLSXAnimations(rootElement) != null)){
+		console.log("8");
+		return error;
+	}
 };
 	
 /*

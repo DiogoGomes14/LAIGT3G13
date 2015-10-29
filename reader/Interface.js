@@ -11,8 +11,8 @@ MyInterface.prototype.init = function(application) {
 
     this.gui = new dat.GUI();
 
-    this.group=this.gui.addFolder("Lights");
-    this.group.open();
+    this.lights=this.gui.addFolder("Lights");
+    this.lights.open();
 
     return true;
 };
@@ -22,5 +22,5 @@ MyInterface.prototype.processKeyboard = function(event) {
 };
 
 MyInterface.prototype.addLightsSwitch = function(name) {
-    this.group.add(this.scene, name);
+    this.lights.add(this.scene, name);
 };
