@@ -2,6 +2,7 @@ function Node () {
     this.material = null;
     this.texture = null;
     this.m = null;
+    this.animation = [];
     this.descendants = [];
 }
 
@@ -19,6 +20,10 @@ Node.prototype.setTexture = function(texture){
 
 Node.prototype.setMatrix = function(m){
     this.m = mat4.clone(m);
+};
+
+Node.prototype.addAnimation = function(animation){
+    this.animation.push(animation);
 };
 /*
 Node.prototype.display = function(scene, matrix, material, texture){

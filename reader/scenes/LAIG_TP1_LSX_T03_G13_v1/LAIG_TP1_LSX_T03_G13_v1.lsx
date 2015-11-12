@@ -7,7 +7,7 @@
         <rotation axis="y" angle="0.0"/>
         <rotation axis="x" angle="0.0"/>
         <scale sx="1.0" sy="1.0" sz="1.0"/>
-        <reference length="0.0"/>
+        <reference length="5.0"/>
     </INITIALS>
 
 
@@ -49,7 +49,7 @@
             <file path="images/panel.jpg"/>
             <amplif_factor s="1.0" t="1.0"/>
         </TEXTURE>
-
+<!--
         <TEXTURE id="body">
             <file path="images/body.jpg"/>
             <amplif_factor s="1.0" t="1.0"/>
@@ -68,7 +68,7 @@
         <TEXTURE id="earth">
             <file path="images/earth.jpg"/>
             <amplif_factor s="1.0" t="1.0"/>
-        </TEXTURE>
+        </TEXTURE>-->
     </TEXTURES>
 
 
@@ -117,8 +117,11 @@
     <ANIMATIONS>
         <ANIMATION id="linear1" span="10" type="linear">
             <controlpoint xx="0.0" yy="0.0" zz="0.0" />
-            <controlpoint xx="1.0" yy="0.0" zz="0.0" />
-            <controlpoint xx="1.0" yy="1.0" zz="0.0" />
+            <controlpoint xx="2.0" yy="0.0" zz="0.0" />
+            <controlpoint xx="2.0" yy="1.0" zz="1.0" />
+            <controlpoint xx="4.0" yy="0.0" zz="1.0" />
+            <controlpoint xx="0.0" yy="0.0" zz="0.0" />
+            <!--<controlpoint xx="2.0" yy="2.0" zz="2.0" />-->
         </ANIMATION>
 
         <ANIMATION id="circular1" span="20" type="circular" center="10.0 10.0 10.0" radius="5.0" startang="40" rotang="20" />
@@ -131,13 +134,24 @@
         <LEAF id="cyl" type="cylinder" args="1.0 0.5 0.5 2 12"/>
         <LEAF id="ball" type="sphere" args="0.5 48 48"/>
         <LEAF id="tri" type="triangle" args="0.0 0.0 0.0  0.433 0.25 0.0  0.5 0.0 0.0"/>
-        <LEAF id="cone" type="cylinder" args="0.0 0.5 0 1 60"/>
+        <LEAF id="cone" type="cylinder" args="1.0 0.5 0 1 60"/>
     </LEAVES>
 
 
     <NODES>
-        <ROOT id="scene"/>
+        <ROOT id="test"/>
 
+        <NODE id="test">
+            <MATERIAL id="default"/>
+            <TEXTURE id="null"/>
+
+            <DESCENDANTS>
+                <DESCENDANT id="cone"/>
+            </DESCENDANTS>
+
+            <ANIMATIONREF id="linear1" />
+        </NODE>
+<!--
         <NODE id="scene">
             <MATERIAL id="default"/>
             <TEXTURE id="null"/>
@@ -632,7 +646,7 @@
                 <DESCENDANT id="cube"/>
             </DESCENDANTS>
 
-        </NODE>
+        </NODE>-->
 
         <NODE id="cube">
             <MATERIAL id="null"/>
@@ -721,14 +735,7 @@
             </DESCENDANTS>
         </NODE>
 
-        <NODE id="test">
-            <MATERIAL id="null"/>
-            <TEXTURE id="null"/>
 
-            <DESCENDANTS>
-                <DESCENDANT id="cone"/>
-            </DESCENDANTS>
-        </NODE>
     </NODES>
 
 </SCENE>

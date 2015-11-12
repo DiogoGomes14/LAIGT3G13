@@ -4,12 +4,12 @@ serialInclude=function(a){var b=console,c=serialInclude.l;if(a.length>0)c.splice
 
 function getUrlVars() {
     var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,    
-    function(m,key,value) {
-      vars[decodeURIComponent(key)] = decodeURIComponent(value);
-    });
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+        function (m, key, value) {
+            vars[decodeURIComponent(key)] = decodeURIComponent(value);
+        });
     return vars;
-}	 
+}
 
 serialInclude([
     '../lib/CGF.js',
@@ -29,33 +29,35 @@ serialInclude([
     'primitives/MySphere.js',
     'primitives/MyTriangle.js',
     'Interface.js',
+    'Animation/Animation.js',
+    'Animation/CircularAnimation.js',
+    'Animation/LinearAnimation.js',
 
-main=function()
-{
-	// Standard application, scene and interface setup
-    var app = new CGFapplication(document.body);
-    var myScene = new XMLscene();
-    var myInterface = new MyInterface();
+    main = function () {
+        // Standard application, scene and interface setup
+        var app = new CGFapplication(document.body);
+        var myScene = new XMLscene();
+        var myInterface = new MyInterface();
 
-    app.init();
+        app.init();
 
-    app.setScene(myScene);
-    app.setInterface(myInterface);
+        app.setScene(myScene);
+        app.setInterface(myInterface);
 
-    myInterface.setActiveCamera(myScene.camera);
+        myInterface.setActiveCamera(myScene.camera);
 
-	// get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml 
-	// or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor) 
-	
-	//var filename=getUrlVars()['file'] || "demo.xml";
-    var filename=getUrlVars()['file'] || "LAIG_TP1_LSX_T03_G13_v1/LAIG_TP1_LSX_T03_G13_v1.lsx";
+        // get file name provided in URL, e.g. http://localhost/myproj/?file=myfile.xml
+        // or use "demo.xml" as default (assumes files in subfolder "scenes", check MySceneGraph constructor)
 
-	// create and load graph, and associate it to scene. 
-	// Check console for loading errors
-	var myGraph = new MySceneGraph(filename, myScene);
-	
-	// start
-    app.run();
-}
+        //var filename=getUrlVars()['file'] || "demo.xml";
+        var filename = getUrlVars()['file'] || "LAIG_TP1_LSX_T03_G13_v1/LAIG_TP1_LSX_T03_G13_v1.lsx";
+
+        // create and load graph, and associate it to scene.
+        // Check console for loading errors
+        var myGraph = new MySceneGraph(filename, myScene);
+
+        // start
+        app.run();
+    }
 
 ]);

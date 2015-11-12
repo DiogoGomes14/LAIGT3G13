@@ -35,18 +35,15 @@ XMLscene.prototype.init = function (application) {
     this.primitives = [];
     this.primitiveMatrix = [];
     this.types = [];
+
+    this.setUpdatePeriod(1000/60);
+    //this.setUpdatePeriod(1000);
 };
 
 XMLscene.prototype.initLights = function () {
-
-    this.shader.bind();
-
-
     this.lights[0].setPosition(2, 3, 3, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].update();
-
-    this.shader.unbind();
 };
 
 XMLscene.prototype.initCameras = function () {
@@ -140,62 +137,66 @@ XMLscene.prototype.onGraphLoaded = function () {
 
     //OBJECTS
     this.objects = [];
-    for(var leaf in this.lsxLeaves){
-        if(this.lsxLeaves.hasOwnProperty(leaf)){
-            if(this.lsxLeaves[leaf].type === "rectangle"){
+    for (var leaf in this.lsxLeaves) {
+        if (this.lsxLeaves.hasOwnProperty(leaf)) {
+            if (this.lsxLeaves[leaf].type === "rectangle") {
 
-                this.objects[leaf] = new MyRectangle(
-                    this,
-                    [
+                this.objects[leaf] =
+                    new MyRectangle(
+                        this,
+                        [
+                            this.lsxLeaves[leaf].args[0],
+                            this.lsxLeaves[leaf].args[1]
+                        ],
+                        [
+                            this.lsxLeaves[leaf].args[2],
+                            this.lsxLeaves[leaf].args[3]
+                        ]
+                    );
+
+            } else if (this.lsxLeaves[leaf].type === "cylinder") {
+
+                this.objects[leaf] =
+                    new MyCylinder(
+                        this,
                         this.lsxLeaves[leaf].args[0],
-                        this.lsxLeaves[leaf].args[1]
-                    ],
-                    [
+                        this.lsxLeaves[leaf].args[1],
                         this.lsxLeaves[leaf].args[2],
-                        this.lsxLeaves[leaf].args[3]
-                    ]
-                );
+                        this.lsxLeaves[leaf].args[3],
+                        this.lsxLeaves[leaf].args[4]
+                    );
 
-            } else if(this.lsxLeaves[leaf].type === "cylinder"){
+            } else if (this.lsxLeaves[leaf].type === "sphere") {
 
-                this.objects[leaf] = new MyCylinder(
-                    this,
-                    this.lsxLeaves[leaf].args[0],
-                    this.lsxLeaves[leaf].args[1],
-                    this.lsxLeaves[leaf].args[2],
-                    this.lsxLeaves[leaf].args[3],
-                    this.lsxLeaves[leaf].args[4]
-                );
-
-            } else if(this.lsxLeaves[leaf].type === "sphere"){
-
-                this.objects[leaf] = new MySphere(
-                    this,
-                    this.lsxLeaves[leaf].args[0],
-                    this.lsxLeaves[leaf].args[1],
-                    this.lsxLeaves[leaf].args[2]
-                );
-
-            } else if(this.lsxLeaves[leaf].type === "triangle"){
-
-                this.objects[leaf] = new MyTriangle(
-                    this,
-                    [
+                this.objects[leaf] =
+                    new MySphere(
+                        this,
                         this.lsxLeaves[leaf].args[0],
                         this.lsxLeaves[leaf].args[1],
                         this.lsxLeaves[leaf].args[2]
-                    ],
-                    [
-                        this.lsxLeaves[leaf].args[3],
-                        this.lsxLeaves[leaf].args[4],
-                        this.lsxLeaves[leaf].args[5]
-                    ],
-                    [
-                        this.lsxLeaves[leaf].args[6],
-                        this.lsxLeaves[leaf].args[7],
-                        this.lsxLeaves[leaf].args[8]
-                    ]
-                );
+                    );
+
+            } else if (this.lsxLeaves[leaf].type === "triangle") {
+
+                this.objects[leaf] =
+                    new MyTriangle(
+                        this,
+                        [
+                            this.lsxLeaves[leaf].args[0],
+                            this.lsxLeaves[leaf].args[1],
+                            this.lsxLeaves[leaf].args[2]
+                        ],
+                        [
+                            this.lsxLeaves[leaf].args[3],
+                            this.lsxLeaves[leaf].args[4],
+                            this.lsxLeaves[leaf].args[5]
+                        ],
+                        [
+                            this.lsxLeaves[leaf].args[6],
+                            this.lsxLeaves[leaf].args[7],
+                            this.lsxLeaves[leaf].args[8]
+                        ]
+                    );
 
             } else
                 console.error("there is no primitive type named " + leaf);
@@ -204,11 +205,40 @@ XMLscene.prototype.onGraphLoaded = function () {
 
     var root = this.graph.nodes[this.graph["root"]];
 
-    if(root == undefined){
+    if (root == undefined) {
         console.error("Couldn't find root in the nodes!!");
     }
 
     this.computeGraph(root, root.m, root.material, root.texture);
+
+    this.animations = [];
+
+    for (var animationName in this.lsxAnimations) {
+        if (this.lsxAnimations.hasOwnProperty(animationName)) {
+            var animation = this.lsxAnimations[animationName];
+
+            if (animation.type == "circular") {
+                this.animations[animationName] =
+                    new CircularAnimation(
+                        this,
+                        animation.span,
+                        animation.radius,
+                        animation.center,
+                        animation.startAng,
+                        animation.rotAng
+                    );
+            } else if (animation.type == "linear") {
+                this.animations[animationName] =
+                    new LinearAnimation(
+                        this,
+                        animation.span,
+                        animation.controlPoints
+                    );
+            }
+        }
+    }
+
+    console.log(this.graph.nodes);
 };
 
 XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
@@ -231,22 +261,22 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
             console.error("There is no material named " + node.material + ".");
     }
 
-    for(var descendantIndex in node.descendants){
-        if(node.descendants.hasOwnProperty(descendantIndex)){
+    for (var descendantIndex in node.descendants) {
+        if (node.descendants.hasOwnProperty(descendantIndex)) {
             var descendantName = node.descendants[descendantIndex];
 
             var leaf = this.lsxLeaves[descendantName];
 
-            if(leaf !== undefined){ //This node is a leaf so push its transformations and appearance
+            if (leaf !== undefined) { //This node is a leaf so push its transformations and appearance
                 var primitive = this.objects[descendantName];
                 var tex = this.lsxTextures[texture];
                 var mat = this.lsxMaterials[material];
 
-                if(mat === undefined) {
+                if (mat === undefined) {
                     mat = this.defaultMaterial;
                 }
 
-                if(tex === undefined){
+                if (tex === undefined) {
                     tex = null;
                 }
 
@@ -259,7 +289,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
             else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
                 var nodeDesc = this.graph.nodes[descendantName];
 
-                if(nodeDesc !== undefined){ //There is a node
+                if (nodeDesc !== undefined) { //There is a node
 
                     // multiply the matrix of the upperNode by this node matrix
                     var newMatrix = mat4.create();
@@ -267,7 +297,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
 
                     this.computeGraph(nodeDesc, newMatrix, material, texture);
                 }
-                else{
+                else {
                     console.error("There is no node named " + descendantName + ". " +
                         "The parent calling this node is " + node);
                 }
@@ -279,21 +309,21 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
 XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
 
     //only change the amplification factor of the primitives of type rectangle or triangle
-    if ((type === "rectangle" || type === "triangle") && texture != null){
+    if ((type === "rectangle" || type === "triangle") && texture != null) {
         primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
         primitive.updateTexCoordsGLBuffers();
     }
-    if(texture != null){
+    if (texture != null) {
         texture = texture.texture;
     }
 
     //draw the primitive with the calculated transformations/appearance
     this.pushMatrix();
-        this.multMatrix(this.initialMatrix);
-        this.multMatrix(matrix);
-        material.setTexture(texture);
-        material.apply();
-        primitive.display();
+    this.multMatrix(this.initialMatrix);
+    this.multMatrix(matrix);
+    material.setTexture(texture);
+    material.apply();
+    primitive.display();
     this.popMatrix();
 
     //reset the texture of the appearance
@@ -302,7 +332,6 @@ XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, tex
 
 XMLscene.prototype.display = function () {
     // ---- BEGIN Background, camera and axis setup
-    this.shader.bind();
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
@@ -331,7 +360,7 @@ XMLscene.prototype.display = function () {
             if (this.lights.hasOwnProperty(light)) {
 
                 //if the check on the gui is true, enable light, else disable
-                if(this[this.lights[light].name]){
+                if (this[this.lights[light].name]) {
                     this.lights[light].enable();
                 } else {
                     this.lights[light].disable();
@@ -342,16 +371,30 @@ XMLscene.prototype.display = function () {
         }
 
         //display each primitive with the appropriate transformations/appearance
-        for(var i = 0; i < this.primitives.length; i++){
+
+        for (var i = 0; i < this.primitives.length; i++) {
+            var matrix = new mat4.create();
+            mat4.multiply(matrix, this.primitiveMatrix[i], this.animations["circular1"].matrix);
+
             this.displayPrimitive(
                 this.primitives[i],
-                this.primitiveMatrix[i],
+                matrix,
                 this.materials[i],
                 this.textures[i],
                 this.types[i]
             );
         }
     }
+};
 
-    this.shader.unbind();
+XMLscene.prototype.update = function (currTime) {
+    //console.log(this.updatePeriod + ", " + 1/60);
+    if (this.graph.loadedOk) {
+        var a = this.animations["circular1"].active;
+        //console.log(a);
+        if(a)
+            this.animations["circular1"].update();
+    }
+
+    //console.log(currTime);
 };

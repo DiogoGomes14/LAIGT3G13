@@ -11,12 +11,17 @@ MySceneGraph.prototype.parseLSXNodes = function (rootElement) {
 
     this.nodes = [];
     this['root'] = elems[0].children[0].id;
+
     var nModes = elems[0].children.length;
+
     for (var i = 1; i < nModes; i++) {
+
         var e = elems[0].children[i];
+
         if(this.nodes[e] !== undefined){
             console.error("Node " + e + " already exists");
         }
+
         this.parseLSXNode(e);
     }
 };
@@ -76,4 +81,7 @@ MySceneGraph.prototype.parseLSXNode = function (element) {
         this.nodes[element.id].push(this.reader.getString(element.children[i].children[j], 'id', true));
     }
 
+    while(element.children[++i] != null){
+        this.nodes[element.id].addAnimation(this.reader.getString(element.children[i], 'id'));
+    }
 };

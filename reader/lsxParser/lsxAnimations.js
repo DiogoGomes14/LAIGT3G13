@@ -20,7 +20,7 @@ MySceneGraph.prototype.parseLSXAnimations = function(rootElement) {
         }
         this.scene.lsxAnimations[e.id] = this.parseLSXAnimation(e);
     }
-    console.log(this.scene.lsxAnimations);
+    //console.log(this.scene.lsxAnimations);
 };
 
 MySceneGraph.prototype.parseLSXAnimation = function(element) {
@@ -35,11 +35,11 @@ MySceneGraph.prototype.parseLSXAnimation = function(element) {
 
         for(var i = 0; i < element.children.length; i++){
             animation["controlPoints"].push(
-                [
-                    this.reader.getFloat(element.children[i], 'xx', true),
-                    this.reader.getFloat(element.children[i], 'yy', true),
-                    this.reader.getFloat(element.children[i], 'zz', true)
-                ]
+                {
+                    "x" : this.reader.getFloat(element.children[i], 'xx', true),
+                    "y" : this.reader.getFloat(element.children[i], 'yy', true),
+                    "z" : this.reader.getFloat(element.children[i], 'zz', true)
+                }
             )
         }
 
