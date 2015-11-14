@@ -1,5 +1,5 @@
 function CircularAnimation(scene, duration, radius, center, initialAngle, rotationAngle) {
-    Animation.call(this, scene, duration);
+    Animation.call(this, scene, duration, "Circular");
 
     this.radius = radius;
     this.center = {
@@ -22,11 +22,9 @@ CircularAnimation.prototype.init = function () {
 };
 
 CircularAnimation.prototype.update = function (time) {
-//TODO fix time steps
+
     var angle = Math.PI * (this.initialAngle + this.angleVariation * time) / 180;
 
-    //console.log(angle);
-    //console.log(this.angleVariation);
     return Animation.prototype.update.call(
         this,
         -angle,

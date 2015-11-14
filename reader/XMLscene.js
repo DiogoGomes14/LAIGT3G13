@@ -31,7 +31,6 @@ XMLscene.prototype.init = function (application) {
     this.defaultMaterial.setShininess(10.0);
 
     this.primitives = [];
-    this.primitiveAnimations = [];
     this.activeAnimations = [];
 
     this.setUpdatePeriod(1000 / 60);
@@ -260,11 +259,12 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
 
     if (node.animations.length != 0) {
         var priority = 0;
+        var animation = null;
 
         for (var i = 0; i < node.animations.length; i++) {
-            var animation = this.animations[node.animations[i]];
+            animation = this.animations[node.animations[i]];
 
-            if(animation == null){
+            if (animation == null) {
                 console.error("Animations " + node.animations[i] + " doesn't exist.");
                 break;
             }
@@ -282,7 +282,15 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
             );
             priority++;
         }
+
+        if (animations != undefined) {
+            animation = animations[0];
+            animation.active = true;
+            this.activeAnimations.push(animation);
+        }
     }
+
+    console.log(animations);
 
     for (var descendantIndex in node.descendants) {
         if (node.descendants.hasOwnProperty(descendantIndex)) {
@@ -294,6 +302,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                 var primitive = this.objects[descendantName];
                 var tex = this.lsxTextures[texture];
                 var mat = this.lsxMaterials[material];
+                anim = null;
 
                 if (mat === undefined) {
                     mat = this.defaultMaterial;
@@ -302,21 +311,24 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                 if (tex === undefined) {
                     tex = null;
                 }
-                animations[0].active = true;
+
+                if (animations.length > 0) {
+                    var anim = animations[0];
+                    anim.active = true;
+                    //this.activeAnimations.push(anim);
+                }
 
                 this.primitives.push(
                     {
                         'primitive': primitive,
                         'matrix': matrix,
-                        'material' : mat,
+                        'material': mat,
                         'texture': tex,
                         'animations': animations,
-                        'animation' : animations[0],
-                        'nAnimation' : 0
+                        'animation': anim,
+                        'nAnimation': 0
                     }
                 );
-
-                this.activeAnimations.push(animations[0]);
             }
             else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
                 var nodeDesc = this.graph.nodes[descendantName];
@@ -327,7 +339,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                     var newMatrix = mat4.create();
                     mat4.multiply(newMatrix, matrix, nodeDesc.m);
 
-                    this.computeGraph(nodeDesc, newMatrix, material, texture);
+                    this.computeGraph(nodeDesc, newMatrix, material, texture, animations);
                 }
                 else {
                     console.error("There is no node named " + descendantName + ". " +
@@ -341,7 +353,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
 XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture) {
 
     //change the amplification factor of the primitives
-    if(texture != null){
+    if (texture != null) {
         primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
         primitive.updateTexCoordsGLBuffers();
     }
@@ -403,12 +415,36 @@ XMLscene.prototype.display = function () {
         }
 
         //display each primitive with the appropriate transformations/appearance
-
         for (var i = 0; i < this.primitives.length; i++) {
             var primitive = this.primitives[i];
             var matrix = new mat4.create();
-            //console.log(this.primitiveActiveAnimations[i]);
-            mat4.multiply(matrix, primitive.animation, primitive.matrix);
+
+            if (primitive.animation != null) {
+                mat4.multiply(matrix, primitive.animation.matrix, primitive.matrix);
+
+                if (!primitive.animation.active) {
+                    if (primitive.nAnimation < primitive.animations.length - 1) {
+
+                        var index = this.activeAnimations.indexOf(primitive.animation);
+                        if (index > -1) {
+                            this.activeAnimations.splice(index, 1);
+                        }
+
+                        primitive.nAnimation++;
+                        primitive.animation = primitive.animations[primitive.nAnimation];
+                        primitive.animation.active = true;
+
+                        if (!(this.activeAnimations.indexOf(primitive.animation) > -1)) {
+                            this.activeAnimations.push(primitive.animation);
+                        }
+                    }
+                    else {
+                        primitive.animation = null;
+                    }
+                }
+            } else {
+                matrix = primitive.matrix;
+            }
 
             this.displayPrimitive(
                 primitive.primitive,
@@ -422,32 +458,29 @@ XMLscene.prototype.display = function () {
 
 XMLscene.prototype.update = function (currTime) {
     if (this.graph.loadedOk) {
-        for(var i = 0; i < this.activeAnimations.length; i++){
-            var anim = this.activeAnimations[i];
-            //console.log(anim);
-            if(anim != null){
+        for (var i = 0; i < this.activeAnimations.length; i++) {
+            var animation = this.activeAnimations[i];
 
-                anim.time += this.updatePeriod / 1000;
-                anim.timeVector += this.updatePeriod / 1000;
+            if (!animation.active) {
+                break;
+            }
+            //TODO fix the order of the animations using priority
+            //console.log(animation.time, i);
+            animation.time += this.updatePeriod / 1000;
+            animation.timeVector += this.updatePeriod / 1000;
 
-                anim.matrix = anim.animation.update(anim.time, anim.timeVector, anim.nVector);
-                //console.log();
+            animation.matrix = animation.animation.update(animation.time, animation.timeVector, animation.nVector);
 
-                if (anim.timeVector >= anim.animation.duration * anim.animation.vectors[anim.nVector].l / anim.animation.distance) {
-                    anim.nVector++;
-                    anim.timeVector = 0;
-                }
+            if (animation.animation.type == "Linear" && animation.timeVector >= animation.animation.duration * animation.animation.vectors[animation.nVector].l / animation.animation.distance) {
+                animation.nVector++;
+                animation.timeVector = 0;
+            }
 
-                if(anim.time > anim.animation.distance){
-                    this.activeAnimations[i] = null;
-                    for(var j = 0; j < this.primitiveAnimations[i].length - 1; j++){
-                        if(this.primitiveAnimations[i][j].active){
-                            this.primitiveAnimations[i][j].active = false;
-                            this.primitiveAnimations[i][j + 1].active = true;
-                            this.activeAnimations[i] = this.primitiveAnimations[i][j + 1];
-                        }
-                    }
-                }
+            if (animation.time >= animation.animation.duration) {
+                animation.time = 0;
+                animation.nVector = 0;
+                animation.timeVector = 0;
+                animation.active = false;
             }
         }
     }

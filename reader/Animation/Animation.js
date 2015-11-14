@@ -1,7 +1,8 @@
-function Animation(scene, duration) {
+function Animation(scene, duration, type) {
     this.active = true;
     this.scene = scene;
     this.duration = duration;
+    this.type = type;
 }
 
 Animation.prototype.update = function (angleRot, vecPosition) {

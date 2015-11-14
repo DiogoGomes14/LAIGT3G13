@@ -1,11 +1,9 @@
 function LinearAnimation(scene, duration, controlPoints) {
-    Animation.call(this, scene, duration);
+    Animation.call(this, scene, duration, "Linear");
 
     this.controlPoints = controlPoints;
 
     this.distance = 0;
-    this.nVector = 0;
-    this.timeVector = 0;
     this.vectors = [];
 
     for (var i = 0; i < this.controlPoints.length - 1; i++) {
@@ -36,7 +34,6 @@ LinearAnimation.prototype = Object.create(Animation.prototype);
 LinearAnimation.prototype.constructor = LinearAnimation;
 
 LinearAnimation.prototype.update = function (time, timeVector, nVector) {
-
     var vector = this.vectors[nVector],
         angle = Math.acos(vector.x / (vector.lxz == 0 ? 1 : vector.lxz)), //TODO change. There is a bug here when the vector is different than 0 only on the y axis
         x = this.controlPoints[nVector].x + vector.x * this.velocity * timeVector / vector.l,
@@ -44,9 +41,4 @@ LinearAnimation.prototype.update = function (time, timeVector, nVector) {
         z = this.controlPoints[nVector].z + vector.z * this.velocity * timeVector / vector.l;
 
     return Animation.prototype.update.call(this, angle, [x, y, z]);
-
-    //console.log(this.timeSector);
-    //console.log(this.time + " : " + this.duration * this.vecAnimating.l / this.distance);
-    //console.log("VECTOR: x = " + this.startingPoint.x + "| y = " + this.startingPoint.y + "| z = " + this.startingPoint.z);
-    //console.log("Angle: " + Math.round(angle * 180 / Math.PI) + "; vector: x=" + x + " y=" + y + " z=" + z);
 };

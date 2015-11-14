@@ -146,11 +146,23 @@
             <TEXTURE id="null"/>
 
             <DESCENDANTS>
+                <DESCENDANT id="cube"/>
+            </DESCENDANTS>
+
+            <ANIMATIONREF id="linear1" />
+            <ANIMATIONREF id="circular1" />
+        </NODE>
+
+        <NODE id="test2">
+            <MATERIAL id="default"/>
+            <TEXTURE id="null"/>
+
+            <DESCENDANTS>
                 <DESCENDANT id="cone"/>
             </DESCENDANTS>
 
             <ANIMATIONREF id="linear1" />
-            <ANIMATIONREF id="linear1" />
+            <ANIMATIONREF id="circular1" />
         </NODE>
 <!--
         <NODE id="scene">
@@ -648,7 +660,6 @@
             </DESCENDANTS>
 
         </NODE>-->
-
         <NODE id="cube">
             <MATERIAL id="null"/>
             <TEXTURE id="null"/>
@@ -735,7 +746,6 @@
                 <DESCENDANT id="rec"/>
             </DESCENDANTS>
         </NODE>
-
 
     </NODES>
 
