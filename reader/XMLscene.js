@@ -34,10 +34,10 @@ XMLscene.prototype.init = function (application) {
     this.textures = [];
     this.primitives = [];
     this.primitiveMatrix = [];
-    this.types = [];
+    this.primitiveAnimations = [];
+    this.primitiveActiveAnimations = [];
 
-    this.setUpdatePeriod(1000/60);
-    //this.setUpdatePeriod(1000);
+    this.setUpdatePeriod(1000 / 60);
 };
 
 XMLscene.prototype.initLights = function () {
@@ -209,8 +209,6 @@ XMLscene.prototype.onGraphLoaded = function () {
         console.error("Couldn't find root in the nodes!!");
     }
 
-    this.computeGraph(root, root.m, root.material, root.texture);
-
     this.animations = [];
 
     for (var animationName in this.lsxAnimations) {
@@ -238,10 +236,13 @@ XMLscene.prototype.onGraphLoaded = function () {
         }
     }
 
-    console.log(this.graph.nodes);
+    this.computeGraph(root, root.m, root.material, root.texture, []);
+
+    console.log(this.primitiveAnimations);
+    console.log(this.primitiveActiveAnimations);
 };
 
-XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
+XMLscene.prototype.computeGraph = function (node, matrix, material, texture, animations) {
 
     if (node.texture === "clear") { // Ignore the texture from the parent
         if (texture !== "clear") {
@@ -259,6 +260,32 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
             material = node.material;
         else
             console.error("There is no material named " + node.material + ".");
+    }
+
+    if (node.animations.length != 0) {
+        var priority = 0;
+
+        for (var i = 0; i < node.animations.length; i++) {
+            var animation = this.animations[node.animations[i]];
+
+            if(animation == null){
+                console.error("Animations " + node.animations[i] + " doesn't exist.");
+                break;
+            }
+
+            animations.push(
+                {
+                    'animation': animation,
+                    'priority': priority,
+                    'active': false,
+                    'time': 0,
+                    'nVector': 0,
+                    'timeVector': 0,
+                    'matrix': false
+                }
+            );
+            priority++;
+        }
     }
 
     for (var descendantIndex in node.descendants) {
@@ -279,12 +306,14 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
                 if (tex === undefined) {
                     tex = null;
                 }
+                animations[0].active = true;
 
                 this.primitives.push(primitive);
                 this.primitiveMatrix.push(matrix);
                 this.materials.push(mat);
                 this.textures.push(tex);
-                this.types.push(leaf.type);
+                this.primitiveAnimations.push(animations);
+                this.primitiveActiveAnimations.push(animations[0]);
             }
             else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
                 var nodeDesc = this.graph.nodes[descendantName];
@@ -306,10 +335,10 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture) {
     }
 };
 
-XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture, type) {
+XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, texture) {
 
-    //only change the amplification factor of the primitives of type rectangle or triangle
-    if ((type === "rectangle" || type === "triangle") && texture != null) {
+    //change the amplification factor of the primitives
+    if(texture != null){
         primitive.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
         primitive.updateTexCoordsGLBuffers();
     }
@@ -374,27 +403,48 @@ XMLscene.prototype.display = function () {
 
         for (var i = 0; i < this.primitives.length; i++) {
             var matrix = new mat4.create();
-            mat4.multiply(matrix, this.primitiveMatrix[i], this.animations["circular1"].matrix);
+            //console.log(this.primitiveActiveAnimations[i]);
+            mat4.multiply(matrix, this.primitiveActiveAnimations[i].matrix, this.primitiveMatrix[i]);
 
             this.displayPrimitive(
                 this.primitives[i],
                 matrix,
                 this.materials[i],
-                this.textures[i],
-                this.types[i]
+                this.textures[i]
             );
         }
     }
 };
 
 XMLscene.prototype.update = function (currTime) {
-    //console.log(this.updatePeriod + ", " + 1/60);
     if (this.graph.loadedOk) {
-        var a = this.animations["circular1"].active;
-        //console.log(a);
-        if(a)
-            this.animations["circular1"].update();
-    }
+        for(var i = 0; i < this.primitiveActiveAnimations.length; i++){
+            var anim = this.primitiveActiveAnimations[i];
+            console.log(anim);
+            if(anim != null){
 
-    //console.log(currTime);
+                anim.time += this.updatePeriod / 1000;
+                anim.timeVector += this.updatePeriod / 1000;
+
+                anim.matrix = anim.animation.update(anim.time, anim.timeVector, anim.nVector);
+                console.log();
+
+                if (anim.timeVector >= anim.animation.duration * anim.animation.vectors[anim.nVector].l / anim.animation.distance) {
+                    anim.nVector++;
+                    anim.timeVector = 0;
+                }
+
+                if(anim.time > anim.animation.distance){
+                    this.primitiveActiveAnimations[i] = null;
+                    for(var j = 0; j < this.primitiveAnimations[i].length - 1; j++){
+                        if(this.primitiveAnimations[i][j].active){
+                            this.primitiveAnimations[i][j].active = false;
+                            this.primitiveAnimations[i][j + 1].active = true;
+                            this.primitiveActiveAnimations[i] = this.primitiveAnimations[i][j + 1];
+                        }
+                    }
+                }
+            }
+        }
+    }
 };

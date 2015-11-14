@@ -66,6 +66,10 @@ MyCylinder.prototype.initBuffers = function () {
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
 };
+
+MyCylinder.prototype.updateTexCoords = function(){
+
+};
 /*
 MyCylinder.prototype.display1 = function(matrix, material, texture){
 

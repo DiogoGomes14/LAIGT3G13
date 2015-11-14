@@ -115,7 +115,7 @@
     </MATERIALS>
 
     <ANIMATIONS>
-        <ANIMATION id="linear1" span="10" type="linear">
+        <ANIMATION id="linear1" span="1" type="linear">
             <controlpoint xx="0.0" yy="0.0" zz="0.0" />
             <controlpoint xx="2.0" yy="0.0" zz="0.0" />
             <controlpoint xx="2.0" yy="1.0" zz="1.0" />
@@ -124,7 +124,7 @@
             <!--<controlpoint xx="2.0" yy="2.0" zz="2.0" />-->
         </ANIMATION>
 
-        <ANIMATION id="circular1" span="20" type="circular" center="10.0 10.0 10.0" radius="5.0" startang="40" rotang="20" />
+        <ANIMATION id="circular1" span="4" type="circular" center="0.0 0.0 0.0" radius="2.0" startang="0" rotang="360" />
     </ANIMATIONS>
 
 
@@ -149,6 +149,7 @@
                 <DESCENDANT id="cone"/>
             </DESCENDANTS>
 
+            <ANIMATIONREF id="linear1" />
             <ANIMATIONREF id="linear1" />
         </NODE>
 <!--

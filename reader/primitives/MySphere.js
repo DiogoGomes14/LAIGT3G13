@@ -58,6 +58,10 @@ MySphere.prototype.initBuffers = function () {
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
 };
+
+MySphere.prototype.updateTexCoords = function(){
+
+};
 /*
 MySphere.prototype.display1 = function(matrix, material, texture){
     if(texture !== null){

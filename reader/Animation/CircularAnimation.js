@@ -2,7 +2,11 @@ function CircularAnimation(scene, duration, radius, center, initialAngle, rotati
     Animation.call(this, scene, duration);
 
     this.radius = radius;
-    this.center = center;
+    this.center = {
+        'x': center[0],
+        'y': center[1],
+        'z': center[2]
+    };
     this.initialAngle = initialAngle;
     this.rotationAngle = rotationAngle;
 
@@ -17,26 +21,21 @@ CircularAnimation.prototype.init = function () {
 
 };
 
-CircularAnimation.prototype.update = function () {
+CircularAnimation.prototype.update = function (time) {
+//TODO fix time steps
+    var angle = Math.PI * (this.initialAngle + this.angleVariation * time) / 180;
 
-    if (this.time >= this.duration) {
-        this.active = false;
-        return;
-    }
-
-    var angle = this.initialAngle + this.angleVariation * this.time;
-    Animation.prototype.update.call(
+    //console.log(angle);
+    //console.log(this.angleVariation);
+    return Animation.prototype.update.call(
         this,
-        angle,
+        -angle,
         [
-            this.center[0] + this.radius * Math.cos(angle),
-            this.center[1],
-            this.center[2] + this.radius * Math.sin(angle)
-        ]
+            this.center.x + this.radius * Math.cos(angle),
+            this.center.y,
+            this.center.z + this.radius * Math.sin(angle)
+        ],
+        time
     );
 
-};
-
-CircularAnimation.prototype.reset = function () {
-    Animation.prototype.reset.call(this);
 };

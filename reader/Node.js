@@ -2,7 +2,7 @@ function Node () {
     this.material = null;
     this.texture = null;
     this.m = null;
-    this.animation = [];
+    this.animations = [];
     this.descendants = [];
 }
 
@@ -23,7 +23,7 @@ Node.prototype.setMatrix = function(m){
 };
 
 Node.prototype.addAnimation = function(animation){
-    this.animation.push(animation);
+    this.animations.push(animation);
 };
 /*
 Node.prototype.display = function(scene, matrix, material, texture){

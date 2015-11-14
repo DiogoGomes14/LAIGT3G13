@@ -5,8 +5,7 @@ function LinearAnimation(scene, duration, controlPoints) {
 
     this.distance = 0;
     this.nVector = 0;
-    this.timeSector = 0;
-    this.startingPoint = {'x': 0, 'y': 0, 'z': 0};
+    this.timeVector = 0;
     this.vectors = [];
 
     for (var i = 0; i < this.controlPoints.length - 1; i++) {
@@ -17,7 +16,15 @@ function LinearAnimation(scene, duration, controlPoints) {
         var vecLength = Math.sqrt(x * x + y * y + z * z);
         var vecLengthXZ = Math.sqrt(x * x + z * z);
 
-        this.vectors.push({'x': x, 'y': y, 'z': z, 'l': vecLength,'lxz': vecLengthXZ, 't': 0});
+        this.vectors.push(
+            {
+                'x': x,
+                'y': y,
+                'z': z,
+                'l': vecLength,
+                'lxz': vecLengthXZ
+            }
+        );
 
         this.distance += vecLength;
     }
@@ -28,37 +35,18 @@ function LinearAnimation(scene, duration, controlPoints) {
 LinearAnimation.prototype = Object.create(Animation.prototype);
 LinearAnimation.prototype.constructor = LinearAnimation;
 
-LinearAnimation.prototype.update = function () {
+LinearAnimation.prototype.update = function (time, timeVector, nVector) {
 
-    //update the time that this vector has used
-    this.timeSector += this.scene.updatePeriod / 1000;
-
-    var vector = this.vectors[this.nVector],
+    var vector = this.vectors[nVector],
         angle = Math.acos(vector.x / (vector.lxz == 0 ? 1 : vector.lxz)), //TODO change. There is a bug here when the vector is different than 0 only on the y axis
-        x = this.startingPoint.x + vector.x * this.velocity * this.timeSector / vector.l,
-        y = this.startingPoint.y + vector.y * this.velocity * this.timeSector / vector.l,
-        z = this.startingPoint.z + vector.z * this.velocity * this.timeSector / vector.l;
+        x = this.controlPoints[nVector].x + vector.x * this.velocity * timeVector / vector.l,
+        y = this.controlPoints[nVector].y + vector.y * this.velocity * timeVector / vector.l,
+        z = this.controlPoints[nVector].z + vector.z * this.velocity * timeVector / vector.l;
 
-    if(!Animation.prototype.update.call(this, angle, [x, y, z])){
-        return;
-    }
-
-    //Next vector
-    if (this.timeSector >= this.duration * vector.l / this.distance) {
-        this.startingPoint.x += vector.x;
-        this.startingPoint.y += vector.y;
-        this.startingPoint.z += vector.z;
-        this.nVector++;
-        this.timeSector = 0;
-    }
+    return Animation.prototype.update.call(this, angle, [x, y, z]);
 
     //console.log(this.timeSector);
     //console.log(this.time + " : " + this.duration * this.vecAnimating.l / this.distance);
     //console.log("VECTOR: x = " + this.startingPoint.x + "| y = " + this.startingPoint.y + "| z = " + this.startingPoint.z);
     //console.log("Angle: " + Math.round(angle * 180 / Math.PI) + "; vector: x=" + x + " y=" + y + " z=" + z);
-
-};
-
-LinearAnimation.prototype.reset = function () {
-    Animation.prototype.reset.call(this);
 };
