@@ -30,12 +30,9 @@ XMLscene.prototype.init = function (application) {
     this.defaultMaterial.setSpecular(0.2, 0.4, 0.8, 1.0);
     this.defaultMaterial.setShininess(10.0);
 
-    this.materials = [];
-    this.textures = [];
     this.primitives = [];
-    this.primitiveMatrix = [];
     this.primitiveAnimations = [];
-    this.primitiveActiveAnimations = [];
+    this.activeAnimations = [];
 
     this.setUpdatePeriod(1000 / 60);
 };
@@ -238,8 +235,7 @@ XMLscene.prototype.onGraphLoaded = function () {
 
     this.computeGraph(root, root.m, root.material, root.texture, []);
 
-    console.log(this.primitiveAnimations);
-    console.log(this.primitiveActiveAnimations);
+    console.log(this.activeAnimations);
 };
 
 XMLscene.prototype.computeGraph = function (node, matrix, material, texture, animations) {
@@ -308,12 +304,19 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                 }
                 animations[0].active = true;
 
-                this.primitives.push(primitive);
-                this.primitiveMatrix.push(matrix);
-                this.materials.push(mat);
-                this.textures.push(tex);
-                this.primitiveAnimations.push(animations);
-                this.primitiveActiveAnimations.push(animations[0]);
+                this.primitives.push(
+                    {
+                        'primitive': primitive,
+                        'matrix': matrix,
+                        'material' : mat,
+                        'texture': tex,
+                        'animations': animations,
+                        'animation' : animations[0],
+                        'nAnimation' : 0
+                    }
+                );
+
+                this.activeAnimations.push(animations[0]);
             }
             else { //This is a intermediate node so calculate the matrix, texture and material to send to its child
                 var nodeDesc = this.graph.nodes[descendantName];
@@ -402,15 +405,16 @@ XMLscene.prototype.display = function () {
         //display each primitive with the appropriate transformations/appearance
 
         for (var i = 0; i < this.primitives.length; i++) {
+            var primitive = this.primitives[i];
             var matrix = new mat4.create();
             //console.log(this.primitiveActiveAnimations[i]);
-            mat4.multiply(matrix, this.primitiveActiveAnimations[i].matrix, this.primitiveMatrix[i]);
+            mat4.multiply(matrix, primitive.animation, primitive.matrix);
 
             this.displayPrimitive(
-                this.primitives[i],
+                primitive.primitive,
                 matrix,
-                this.materials[i],
-                this.textures[i]
+                primitive.material,
+                primitive.texture
             );
         }
     }
@@ -418,16 +422,16 @@ XMLscene.prototype.display = function () {
 
 XMLscene.prototype.update = function (currTime) {
     if (this.graph.loadedOk) {
-        for(var i = 0; i < this.primitiveActiveAnimations.length; i++){
-            var anim = this.primitiveActiveAnimations[i];
-            console.log(anim);
+        for(var i = 0; i < this.activeAnimations.length; i++){
+            var anim = this.activeAnimations[i];
+            //console.log(anim);
             if(anim != null){
 
                 anim.time += this.updatePeriod / 1000;
                 anim.timeVector += this.updatePeriod / 1000;
 
                 anim.matrix = anim.animation.update(anim.time, anim.timeVector, anim.nVector);
-                console.log();
+                //console.log();
 
                 if (anim.timeVector >= anim.animation.duration * anim.animation.vectors[anim.nVector].l / anim.animation.distance) {
                     anim.nVector++;
@@ -435,12 +439,12 @@ XMLscene.prototype.update = function (currTime) {
                 }
 
                 if(anim.time > anim.animation.distance){
-                    this.primitiveActiveAnimations[i] = null;
+                    this.activeAnimations[i] = null;
                     for(var j = 0; j < this.primitiveAnimations[i].length - 1; j++){
                         if(this.primitiveAnimations[i][j].active){
                             this.primitiveAnimations[i][j].active = false;
                             this.primitiveAnimations[i][j + 1].active = true;
-                            this.primitiveActiveAnimations[i] = this.primitiveAnimations[i][j + 1];
+                            this.activeAnimations[i] = this.primitiveAnimations[i][j + 1];
                         }
                     }
                 }
