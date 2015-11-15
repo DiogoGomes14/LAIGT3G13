@@ -115,12 +115,13 @@
     </MATERIALS>
 
     <ANIMATIONS>
-        <ANIMATION id="linear1" span="1" type="linear">
+        <ANIMATION id="linear1" span="2" type="linear">
             <controlpoint xx="0.0" yy="0.0" zz="0.0" />
             <controlpoint xx="2.0" yy="0.0" zz="0.0" />
             <controlpoint xx="2.0" yy="1.0" zz="1.0" />
             <controlpoint xx="4.0" yy="0.0" zz="1.0" />
-            <controlpoint xx="0.0" yy="0.0" zz="0.0" />
+            <controlpoint xx="2.0" yy="0.0" zz="-1.0" />
+            <controlpoint xx="2.0" yy="0.0" zz="0.0" />
             <!--<controlpoint xx="2.0" yy="2.0" zz="2.0" />-->
         </ANIMATION>
 
@@ -146,7 +147,7 @@
             <TEXTURE id="null"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="cube"/>
+                <DESCENDANT id="test2"/>
             </DESCENDANTS>
 
             <ANIMATIONREF id="linear1" />
