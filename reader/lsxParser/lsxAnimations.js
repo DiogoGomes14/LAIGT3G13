@@ -31,17 +31,7 @@ MySceneGraph.prototype.parseLSXAnimation = function(element) {
 
     if(animation['type'] == "linear"){
 
-        animation["controlPoints"] = [];
-
-        for(var i = 0; i < element.children.length; i++){
-            animation["controlPoints"].push(
-                {
-                    "x" : this.reader.getFloat(element.children[i], 'xx', true),
-                    "y" : this.reader.getFloat(element.children[i], 'yy', true),
-                    "z" : this.reader.getFloat(element.children[i], 'zz', true)
-                }
-            )
-        }
+        animation["controlPoints"] = this.parseControlPoints(element);
 
     } else if(animation['type'] == "circular"){
 
@@ -63,4 +53,20 @@ MySceneGraph.prototype.parseLSXAnimation = function(element) {
     }
 
     return animation;
+};
+
+MySceneGraph.prototype.parseControlPoints = function(element) {
+    var controlPoints = [];
+
+    for(var i = 0; i < element.children.length; i++){
+        controlPoints.push(
+            {
+                "x" : this.reader.getFloat(element.children[i], 'xx', true),
+                "y" : this.reader.getFloat(element.children[i], 'yy', true),
+                "z" : this.reader.getFloat(element.children[i], 'zz', true)
+            }
+        )
+    }
+
+    return controlPoints;
 };

@@ -32,6 +32,9 @@ serialInclude([
     'Animation/Animation.js',
     'Animation/CircularAnimation.js',
     'Animation/LinearAnimation.js',
+    'primitives/Plane.js',
+    'primitives/Patch.js',
+    'primitives/Terrain.js',
 
     main = function () {
         // Standard application, scene and interface setup

@@ -34,6 +34,11 @@ XMLscene.prototype.init = function (application) {
     this.activeAnimations = [];
 
     this.setUpdatePeriod(1000 / 60);
+
+    //this.terrain = new Terrain(this,"", "");
+    //this.shader = this.terrain.shader;
+
+    this.texture2 = new CGFtexture(this, "scenes/terrain.jpg");
 };
 
 XMLscene.prototype.initLights = function () {
@@ -194,6 +199,36 @@ XMLscene.prototype.onGraphLoaded = function () {
                         ]
                     );
 
+            } else if (this.lsxLeaves[leaf].type === "plane") {
+
+                this.objects[leaf] =
+                    new Plane(
+                        this,
+                        this.lsxLeaves[leaf].parts
+                    );
+
+            } else if (this.lsxLeaves[leaf].type === "patch") {
+
+                this.objects[leaf] =
+                    new Plane(
+                        this,
+                        this.lsxLeaves[leaf].partsU,
+                        this.lsxLeaves[leaf].partsV,
+                        this.lsxLeaves[leaf].order,
+                        this.lsxLeaves[leaf].controlPoints
+                    );
+
+            } else if (this.lsxLeaves[leaf].type === "terrain") {
+
+                this.objects[leaf] =
+                    new Terrain(
+                        this,
+                        this.lsxLeaves[leaf].texture,
+                        this.lsxLeaves[leaf].heightmap
+                    );
+
+            } else if (this.lsxLeaves[leaf].type === "vehicle") {
+                //TODO
             } else
                 console.error("there is no primitive type named " + leaf);
         }
@@ -284,13 +319,6 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
 
             priority++;
         }
-/*
-        if (animations != undefined) {
-            animation = animations[0];
-            animation.active = true;
-            this.activeAnimations.push(animation);
-        }
-        */
     }
 
     console.log(animations);
@@ -314,33 +342,18 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                     tex = null;
                 }
 
-                for (var index in animations){
+                for (var index in animations) {
                     var anim = animations[index];
-                    if(anim.priority == 0){
+                    if (anim.priority == 0) {
                         anim.active = true;
                     }
                 }
-
-                /*
-                for (var index in animations){
-                    var anim = animations[index];
-                    if(anim.priority == 0){
-                        anim.active = true;
-                        activeAnimations.push(anim);
-                        if(!(this.activeAnimations.indexOf(anim.animation) > -1)){
-                            this.activeAnimations.push(anim);
-                        }
-                    }
-                }
-
-                if (animations.length > 0) {
-                    animations[0].active = true;
-                }*/
 
                 this.primitives.push(
                     {
                         'primitive': primitive,
                         'matrix': matrix,
+                        'animMatrix': new mat4.create(),
                         'material': mat,
                         'texture': tex,
                         'animations': animations,
@@ -437,17 +450,12 @@ XMLscene.prototype.display = function () {
             var primitive = this.primitives[i];
             var matrix = new mat4.create();
 
-            for(var j = 0; j < primitive.animations.length; j++){
+            for (var j = 0; j < primitive.animations.length; j++) {
                 var animation = primitive.animations[j];
 
-                if(primitive.priority == animation.priority){
-                    console.log(animation);
-                    if(animation.active){
-                        mat4.multiply(matrix, animation.matrix, primitive.matrix);
-                    }else{
-                        animation.active = true;
-                        mat4.multiply(matrix, animation.matrix, primitive.matrix);
-                    }
+                if (animation.active) {
+                    //mat4.multiply(primitive.animMatrix, animation.matrix, primitive.animMatrix);
+                    mat4.multiply(matrix, animation.matrix, primitive.matrix);
                 }
 
                 if (animation.time >= animation.animation.duration) {
@@ -455,11 +463,16 @@ XMLscene.prototype.display = function () {
                     animation.nVector = 0;
                     animation.timeVector = 0;
                     animation.active = false;
-                    primitive.priority++;
+
+                    if (primitive.animations[j + 1] != undefined && primitive.animations[j + 1].priority > animation.priority) {
+                        primitive.animations[j + 1].active = true;
+                    }
                 }
             }
 
-            if(primitive.animations.length == 0){
+            mat4.multiply(matrix, primitive.animMatrix, primitive.matrix);
+
+            if (primitive.animations.length == 0) {
                 matrix = primitive.matrix;
             }
 
@@ -477,7 +490,7 @@ XMLscene.prototype.display = function () {
 
 XMLscene.prototype.update = function (currTime) {
     if (this.graph.loadedOk) {
-        console.log(this.activeAnimations);
+        //console.log(this.activeAnimations);
         for (var i = 0; i < this.activeAnimations.length; i++) {
             var animation = this.activeAnimations[i];
 
