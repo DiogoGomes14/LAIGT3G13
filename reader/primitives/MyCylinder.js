@@ -67,23 +67,4 @@ MyCylinder.prototype.initBuffers = function () {
     this.initGLBuffers();
 };
 
-MyCylinder.prototype.updateTexCoords = function(){
-
-};
-/*
-MyCylinder.prototype.display1 = function(matrix, material, texture){
-
-    if(texture !== null){
-        texture = texture.texture;
-    }
-
-    this.scene.pushMatrix();
-        this.scene.multMatrix(this.scene.initialMatrix);
-        this.scene.multMatrix(matrix);
-        material.setTexture(texture);
-        material.apply();
-        this.scene.display();
-    this.scene.popMatrix();
-
-    material.setTexture(null);
-};*/
+MyCylinder.prototype.updateTexCoords = function(){};

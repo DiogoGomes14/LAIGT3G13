@@ -84,21 +84,3 @@ MyTriangle.prototype.updateTexCoords = function(amplifS, amplifT){
         this.a * Math.cos(this.gamma) / amplifS, 1.0 - 1.0 / amplifT
     ];
 };
-/*
-MyTriangle.prototype.display1 = function(matrix, material, texture){
-    if(texture !== null){
-        this.updateTexCoords(texture.amp_factor.s, texture.amp_factor.t);
-        this.updateTexCoordsGLBuffers();
-        texture = texture.texture;
-    }
-
-    this.scene.pushMatrix();
-        this.scene.multMatrix(this.scene.initialMatrix);
-        this.scene.multMatrix(matrix);
-        material.setTexture(texture);
-        material.apply();
-        this.scene.display();
-    this.scene.popMatrix();
-
-    material.setTexture(null);
-};*/

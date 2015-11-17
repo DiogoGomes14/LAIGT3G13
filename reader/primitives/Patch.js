@@ -26,7 +26,7 @@ function Patch(scene, partsU, partsV, degree, controlPoints) {
             this.controlPoints.push(v);
         }
     }
-    console.log(this.controlPoints);
+    //console.log(this.controlPoints);
     var nurbsSurface = new CGFnurbsSurface(this.degree, this.degree, this.knots, this.knots, this.controlPoints);
 
     var getSurfacePoint = function (u, v) {
@@ -34,14 +34,14 @@ function Patch(scene, partsU, partsV, degree, controlPoints) {
     };
 
     this.surface = new CGFnurbsObject(this.scene, getSurfacePoint, this.partsU, this.partsV);
+
 }
 
 Patch.prototype = Object.create(CGFobject.prototype);
 Patch.prototype.constructor = Patch;
 
+Patch.prototype.updateTexCoords = function(){};
 
 Patch.prototype.display = function () {
-    this.scene.pushMatrix();
     this.surface.display();
-    this.scene.popMatrix();
 };

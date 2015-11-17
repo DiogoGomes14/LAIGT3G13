@@ -210,7 +210,7 @@ XMLscene.prototype.onGraphLoaded = function () {
             } else if (this.lsxLeaves[leaf].type === "patch") {
 
                 this.objects[leaf] =
-                    new Plane(
+                    new Patch(
                         this,
                         this.lsxLeaves[leaf].partsU,
                         this.lsxLeaves[leaf].partsV,
@@ -228,20 +228,14 @@ XMLscene.prototype.onGraphLoaded = function () {
                     );
 
             } else if (this.lsxLeaves[leaf].type === "vehicle") {
-                //TODO
+                this.objects[leaf] = new Vehicle(this);
             } else
                 console.error("there is no primitive type named " + leaf);
         }
     }
 
-    var root = this.graph.nodes[this.graph["root"]];
-
-    if (root == undefined) {
-        console.error("Couldn't find root in the nodes!!");
-    }
-
+    //ANIMATIONS
     this.animations = [];
-
     for (var animationName in this.lsxAnimations) {
         if (this.lsxAnimations.hasOwnProperty(animationName)) {
             var animation = this.lsxAnimations[animationName];
@@ -267,12 +261,22 @@ XMLscene.prototype.onGraphLoaded = function () {
         }
     }
 
+    //Get the root node and compute the graph
+    var root = this.graph.nodes[this.graph["root"]];
+
+    if (root == undefined) {
+        console.error("Couldn't find root in the nodes!!");
+    }
+
     this.computeGraph(root, root.m, root.material, root.texture, []);
 
-    console.log(this.activeAnimations);
+    //console.log(this.activeAnimations);
+    //console.log(this.primitives);
 };
 
 XMLscene.prototype.computeGraph = function (node, matrix, material, texture, animations) {
+    //console.log(animations);
+
 
     if (node.texture === "clear") { // Ignore the texture from the parent
         if (texture !== "clear") {
@@ -321,7 +325,7 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
         }
     }
 
-    console.log(animations);
+    //console.log(animations);
 
     for (var descendantIndex in node.descendants) {
         if (node.descendants.hasOwnProperty(descendantIndex)) {
@@ -370,7 +374,12 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                     var newMatrix = mat4.create();
                     mat4.multiply(newMatrix, matrix, nodeDesc.m);
 
+                    var oldanims = [];
+                    for(var a in animations){
+                        oldanims.push(animations[a]);
+                    }
                     this.computeGraph(nodeDesc, newMatrix, material, texture, animations);
+                    animations = oldanims;
                 }
                 else {
                     console.error("There is no node named " + descendantName + ". " +
@@ -394,11 +403,11 @@ XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, tex
 
     //draw the primitive with the calculated transformations/appearance
     this.pushMatrix();
-    this.multMatrix(this.initialMatrix);
-    this.multMatrix(matrix);
-    material.setTexture(texture);
-    material.apply();
-    primitive.display();
+        this.multMatrix(this.initialMatrix);
+        this.multMatrix(matrix);
+        material.setTexture(texture);
+        material.apply();
+        primitive.display();
     this.popMatrix();
 
     //reset the texture of the appearance
@@ -450,6 +459,7 @@ XMLscene.prototype.display = function () {
             var primitive = this.primitives[i];
             var matrix = new mat4.create();
 
+            //console.log(primitive);
             for (var j = 0; j < primitive.animations.length; j++) {
                 var animation = primitive.animations[j];
 
@@ -470,13 +480,11 @@ XMLscene.prototype.display = function () {
                 }
             }
 
-            mat4.multiply(matrix, primitive.animMatrix, primitive.matrix);
+            //mat4.multiply(matrix, primitive.animMatrix, primitive.matrix);
 
             if (primitive.animations.length == 0) {
                 matrix = primitive.matrix;
             }
-
-            //console.log(matrix);
 
             this.displayPrimitive(
                 primitive.primitive,

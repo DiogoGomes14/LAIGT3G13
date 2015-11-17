@@ -35,6 +35,7 @@ serialInclude([
     'primitives/Plane.js',
     'primitives/Patch.js',
     'primitives/Terrain.js',
+    'primitives/Vehicle.js',
 
     main = function () {
         // Standard application, scene and interface setup

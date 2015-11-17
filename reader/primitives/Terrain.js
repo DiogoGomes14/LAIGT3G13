@@ -10,11 +10,13 @@ function Terrain(scene, texture, heightMap) {
     this.shader.setUniformsValues({scale: 0.5});
     this.shader.setUniformsValues({uSampler2: 1});
 
-    this.plane = new Patch(scene, 10, 10);
+    this.plane = new Plane(scene, 60);
 }
 
 Terrain.prototype = Object.create(CGFobject.prototype);
 Terrain.prototype.constructor = Terrain;
+
+Terrain.prototype.updateTexCoords = function(){};
 
 Terrain.prototype.display = function() {
     this.material.apply();
