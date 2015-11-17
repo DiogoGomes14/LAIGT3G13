@@ -116,12 +116,12 @@
 
     <ANIMATIONS>
         <ANIMATION id="linear1" span="10" type="linear">
+            <controlpoint xx="2.0" yy="0.0" zz="0.0"/>
+            <controlpoint xx="0.0" yy="0.0" zz="2.0"/>
             <controlpoint xx="0.0" yy="0.0" zz="0.0"/>
+            <controlpoint xx="2.0" yy="1.0" zz="2.0"/>
             <controlpoint xx="2.0" yy="0.0" zz="0.0"/>
-            <controlpoint xx="2.0" yy="1.0" zz="1.0"/>
-            <controlpoint xx="4.0" yy="0.0" zz="1.0"/>
-            <controlpoint xx="2.0" yy="0.0" zz="-1.0"/>
-            <controlpoint xx="2.0" yy="0.0" zz="0.0"/>
+            <!--<controlpoint xx="2.0" yy="0.0" zz="-1.0"/>-->
         </ANIMATION>
 
         <ANIMATION id="circular1" span="5" type="circular" center="0.0 0.0 0.0" radius="2.0" startang="0" rotang="360"/>
@@ -221,7 +221,7 @@
             <SCALE sx="2.0" sy="2.0" sz="2.0"/>
 
             <DESCENDANTS>
-                <DESCENDANT id="vehicleAnim"/>
+                <DESCENDANT id="vehicle2"/>
                 <DESCENDANT id="terrain"/>
             </DESCENDANTS>
 
@@ -235,8 +235,17 @@
                 <DESCENDANT id="vehicle"/>
             </DESCENDANTS>
 
-            <ANIMATIONREF id="linear1"/>
             <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="circular1"/>
+
         </NODE>
 
         <NODE id="terrain">
@@ -249,6 +258,18 @@
             <DESCENDANTS>
                 <DESCENDANT id="terrainP"/>
             </DESCENDANTS>
+        </NODE>
+
+        <NODE id="vehicle2">
+            <MATERIAL id="default"/>
+            <TEXTURE id="panel"/>
+
+            <DESCENDANTS>
+                <DESCENDANT id="vehicle"/>
+            </DESCENDANTS>
+
+            <ANIMATIONREF id="linear1"/>
+            <ANIMATIONREF id="circular1"/>
         </NODE>
 
         <!--

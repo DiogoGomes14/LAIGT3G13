@@ -27,7 +27,7 @@ CircularAnimation.prototype.update = function (time) {
 
     return Animation.prototype.update.call(
         this,
-        -angle + Math.PI/2,
+        -(angle + Math.PI/2),
         [
             this.center.x + this.radius * Math.cos(angle),
             this.center.y,

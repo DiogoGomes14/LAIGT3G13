@@ -12,6 +12,7 @@ Vehicle.prototype.updateTexCoords = function(){};
 
 Vehicle.prototype.display = function() {
     this.scene.pushMatrix();
+    this.scene.rotate(Math.PI/2, 0, 1, 0);
     this.cone.display();
     this.scene.popMatrix();
 };

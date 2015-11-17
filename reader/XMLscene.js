@@ -361,7 +361,8 @@ XMLscene.prototype.computeGraph = function (node, matrix, material, texture, ani
                         'material': mat,
                         'texture': tex,
                         'animations': animations,
-                        'priority': 0
+                        'priority': 0,
+                        'nAnimationsFinished': 0
                     }
                 );
             }
@@ -459,26 +460,32 @@ XMLscene.prototype.display = function () {
             var primitive = this.primitives[i];
             var matrix = new mat4.create();
 
-            //console.log(primitive);
-            for (var j = 0; j < primitive.animations.length; j++) {
-                var animation = primitive.animations[j];
+            if(primitive.nAnimationsFinished < primitive.animations.length){
+                primitive.animMatrix = new mat4.create();
 
-                if (animation.active) {
-                    //mat4.multiply(primitive.animMatrix, animation.matrix, primitive.animMatrix);
-                    mat4.multiply(matrix, animation.matrix, primitive.matrix);
-                }
+                for (var j = 0; j < primitive.animations.length; j++) {
+                    var animation = primitive.animations[j];
 
-                if (animation.time >= animation.animation.duration) {
-                    animation.time = 0;
-                    animation.nVector = 0;
-                    animation.timeVector = 0;
-                    animation.active = false;
+                    if (animation.active) {
+                        mat4.multiply(primitive.animMatrix, animation.matrix, primitive.animMatrix);
+                        //mat4.multiply(matrix, animation.matrix, primitive.matrix);
+                    }
 
-                    if (primitive.animations[j + 1] != undefined && primitive.animations[j + 1].priority > animation.priority) {
-                        primitive.animations[j + 1].active = true;
+                    if (animation.time >= animation.animation.duration) {
+                        animation.time = 0;
+                        animation.nVector = 0;
+                        animation.timeVector = 0;
+                        animation.active = false;
+
+                        if (primitive.animations[j + 1] != undefined && primitive.animations[j + 1].priority > animation.priority) {
+                            primitive.animations[j + 1].active = true;
+                            primitive.nAnimationsFinished++;
+                        }
                     }
                 }
             }
+
+            mat4.multiply(matrix, primitive.animMatrix, primitive.matrix);
 
             //mat4.multiply(matrix, primitive.animMatrix, primitive.matrix);
 
