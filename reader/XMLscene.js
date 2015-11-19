@@ -215,6 +215,7 @@ XMLscene.prototype.onGraphLoaded = function () {
                         this.lsxLeaves[leaf].partsU,
                         this.lsxLeaves[leaf].partsV,
                         this.lsxLeaves[leaf].order,
+                        this.lsxLeaves[leaf].order,
                         this.lsxLeaves[leaf].controlPoints
                     );
 

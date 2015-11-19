@@ -218,10 +218,8 @@
             <MATERIAL id="default"/>
             <TEXTURE id="null"/>
 
-            <SCALE sx="2.0" sy="2.0" sz="2.0"/>
-
             <DESCENDANTS>
-                <DESCENDANT id="vehicle2"/>
+                <DESCENDANT id="vehicleAnim"/>
                 <DESCENDANT id="terrain"/>
             </DESCENDANTS>
 
@@ -231,12 +229,14 @@
             <MATERIAL id="default"/>
             <TEXTURE id="panel"/>
 
+            <ROTATION axis="z" angle="90.0"/>
+
             <DESCENDANTS>
                 <DESCENDANT id="vehicle"/>
             </DESCENDANTS>
 
             <ANIMATIONREF id="circular1"/>
-            <ANIMATIONREF id="circular1"/>
+            <ANIMATIONREF id="linear1"/>
             <ANIMATIONREF id="circular1"/>
             <ANIMATIONREF id="circular1"/>
             <ANIMATIONREF id="circular1"/>
@@ -253,7 +253,7 @@
             <TEXTURE id="null"/>
 
             <TRANSLATION x="0.0" y="-4.0" z="0.0"/>
-            <SCALE sx="7.0" sy="7.0" sz="7.0"/>
+            <SCALE sx="15.0" sy="15.0" sz="15.0"/>
 
             <DESCENDANTS>
                 <DESCENDANT id="terrainP"/>
@@ -768,6 +768,7 @@
                     </DESCENDANTS>
 
                 </NODE>
+                -->
         <NODE id="cube">
             <MATERIAL id="null"/>
             <TEXTURE id="null"/>
@@ -853,7 +854,7 @@
             <DESCENDANTS>
                 <DESCENDANT id="rec"/>
             </DESCENDANTS>
-        </NODE>-->
+        </NODE>
 
     </NODES>
 
