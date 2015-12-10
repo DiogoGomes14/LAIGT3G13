@@ -102,10 +102,12 @@ print_header_line(_).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Require your Prolog Files here
-:-consult('spangles.pl').
+:-ensure_loaded('spangles.pl').
 
 % Server check for connection (can be done with any other input)
 parse_input(handshake, handshake).
+
+parse_input(hello, greetings).
 
 % Used for testing
 parse_input(test(C,N), Res) :- test(C,Res,N).

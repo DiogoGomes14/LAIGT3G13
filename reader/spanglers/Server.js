@@ -14,12 +14,7 @@ function getPrologRequest(requestString, onSuccess, onError, port) {
     request.send();
 }
 
-function makeRequest(requestString) {
+function makeRequest(requestString, handleReply) {
     // Make Request
     return getPrologRequest(requestString, handleReply);
-}
-
-//Handle the Reply
-function handleReply(data) {
-    document.querySelector("#query_result").innerHTML = data.target.response;
 }

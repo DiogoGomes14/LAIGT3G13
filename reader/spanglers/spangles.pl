@@ -1505,23 +1505,23 @@ ver_sol_aux(S,T1,T2,R):-append([],[S,T1,T2], R).
 verif_solution_([[]], p1, pc, B, _, _, _, T1, T2, D, R):-	T1 > 1,
                                                             T2 > 1,
                                                             T11 is T1-1,
-                                                            ver_sol_aux('C',T11,T2,R).
+                                                            ver_sol_aux('Continue',T11,T2,R).
 verif_solution_([[]], ppc, pc, B, _, _, _, T1, T2, D, R):-	T1 > 1,
                                                             T2 > 1,
                                                             T11 is T1-1,
-                                                            ver_sol_aux('C',T11,T2,R).
+                                                            ver_sol_aux('Continue',T11,T2,R).
 verif_solution_([[]], p1, p2, B, _, _, _, T1, T2, _, R):-	T1 > 1,
                                                             T2 > 1,
                                                             T11 is T1-1,
-                                                            ver_sol_aux('C',T11,T2,R).
+                                                            ver_sol_aux('Continue',T11,T2,R).
 verif_solution_([[]], pc, p1, B, _, _, _, T1, T2, D, R):-	T2 > 1,
                                                             T1 > 1,
                                                             T21 is T2-1,
-                                                            ver_sol_aux('C',T1,T21,R).
+                                                            ver_sol_aux('Continue',T1,T21,R).
 verif_solution_([[]], pc, pp1, B, _, _, _, T1, T2, _, R):-	T2 > 1,
                                                             T1 > 1,
                                                             T21 is T2-1,
-                                                            ver_sol_aux('C',T1,T21,R).
+                                                            ver_sol_aux('Continue',T1,T21,R).
 verif_solution_([[]], pc, ppc, B, _, _, _, T1, T2, D, R):-	T2 > 1,
                                                             T1 > 1,
                                                             T21 is T2-1,
