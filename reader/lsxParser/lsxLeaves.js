@@ -1,18 +1,18 @@
 MySceneGraph.prototype.parseLSXLeaves = function (rootElement) {
-    var elems = rootElement.getElementsByTagName('LEAVES');
-    if (elems === null) {
+    var elements = rootElement.getElementsByTagName('LEAVES');
+    if (elements === null) {
         return "LEAVES element is missing.";
     }
 
-    if (elems.length != 1) {
+    if (elements.length != 1) {
         return "either zero or more than one 'LEAVES' element found.";
     }
 
     this.scene.lsxLeaves = [];
     // iterate over every element
-    var nLeaves = elems[0].children.length;
+    var nLeaves = elements[0].children.length;
     for (var i = 0; i < nLeaves; i++) {
-        var e = elems[0].children[i];
+        var e = elements[0].children[i];
         if (this.scene.lsxLeaves[e] !== undefined) {
             console.error("Leaf " + e + " already exists");
         }

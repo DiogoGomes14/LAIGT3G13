@@ -30,7 +30,7 @@ function Patch(scene, partsU, partsV, degreeU, degreeV, controlPoints) {
         for (i = 0; i < this.degreeU + 1; i++) {
             var v = [];
             for (var j = 0; j < this.degreeV + 1; j++) {
-                v.push([controlPoints[i * (this.degreeV + 1) + j].x, controlPoints[i * (this.degreeV + 1) + j].y, controlPoints[i * (this.degreeV + 1) + j].z, 1]);
+                v.push([controlPoints[i * (this.degreeV + 1) + j].x, controlPoints[i * (this.degreeV + 1) + j].z, controlPoints[i * (this.degreeV + 1) + j].z, 1]);
             }
             this.controlPoints.push(v);
         }

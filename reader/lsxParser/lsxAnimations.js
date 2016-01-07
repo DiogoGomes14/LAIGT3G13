@@ -62,7 +62,7 @@ MySceneGraph.prototype.parseControlPoints = function(element) {
         controlPoints.push(
             {
                 "x" : this.reader.getFloat(element.children[i], 'xx', true),
-                "y" : this.reader.getFloat(element.children[i], 'yy', true),
+                "z" : this.reader.getFloat(element.children[i], 'yy', true),
                 "z" : this.reader.getFloat(element.children[i], 'zz', true)
             }
         )

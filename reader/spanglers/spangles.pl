@@ -1413,6 +1413,8 @@ verif_solution([[H|_]|_], p1, _, B, C, R, _, _, _, _):-	H == 2,
 														get_ell(B, C2, R1, E3),
 														E3 == 2,
 														!,
+                                                        write(B),
+                                                        nl,
 														write('Player 1 wins'),
 														nl.
 verif_solution([[H|_]|_], p1, _, B, C, R, _, _, _, _):-	H == 3,
@@ -1424,6 +1426,8 @@ verif_solution([[H|_]|_], p1, _, B, C, R, _, _, _, _):-	H == 3,
 														get_ell(B, C2, R1, E3),
 														E3 == 3,
 														!,
+                                                        write(B),
+                                                        nl,
 														write('Player 1 wins'),
 														nl.
 verif_solution([[_|T]|RE], p1, P2, B, C, R, LL, T1, T2, D):-	C1 is C+1,
@@ -1500,7 +1504,7 @@ verif_solution([[_|T]|RE], pc, P2, B, C, R, LL, T1, T2, D):-	C1 is C+1,
 */
 
 
-ver_sol_aux(S,T1,T2,R):-append([],[S,T1,T2], R).
+ver_sol_aux(S,T1,T2,R):-append([],[S], R).
 
 verif_solution_([[]], p1, pc, B, _, _, _, T1, T2, D, R):-	T1 > 1,
                                                             T2 > 1,

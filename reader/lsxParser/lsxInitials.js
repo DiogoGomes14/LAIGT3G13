@@ -21,7 +21,7 @@ MySceneGraph.prototype.parseInitials = function(rootElement) {
 MySceneGraph.prototype.parseTranslation = function(element) {
     var arr = [];
     arr['x'] = this.reader.getFloat(element, 'x', true);
-    arr['y'] = this.reader.getFloat(element, 'y', true);
+    arr['z'] = this.reader.getFloat(element, 'y', true);
     arr['z'] = this.reader.getFloat(element, 'z', true);
     for(var e in arr){
         if(arr.hasOwnProperty(e)){

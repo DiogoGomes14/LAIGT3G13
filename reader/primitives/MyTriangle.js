@@ -30,6 +30,8 @@ function MyTriangle(scene, v1, v2, v3) {
         console.error("This triangle is wrong. The sum of its internal angles are different from 180.");
     }
 
+    //console.log(Math.round(this.beta * 180 / Math.PI) + " :::: " + Math.round(this.alpha * 180 / Math.PI) + " :::::: " + Math.round(this.beta * 180 / Math.PI));
+    //console.log(Math.round(this.a * 100) / 100 + " ::: " + Math.round(this.b * 100) / 100 + " ::: " + Math.round(this.c * 100) / 100);
     this.initBuffers();
 }
 

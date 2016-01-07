@@ -120,7 +120,7 @@ parse_input(available_plays_cmd(B, TL), PLAF):-available_plays(B,B,1,1,TL,[],PLA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Makes a play and returns the board in the next state, with the piece requested
-parse_input(play_cmd(B,P,R,C), NB):-make_playaux(B, P, R, C, NB).
+parse_input(play_cmd(B,P,R,C), NB):-make_playaux(B,P,R,C,NB).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

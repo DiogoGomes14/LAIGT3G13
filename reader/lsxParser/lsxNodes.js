@@ -42,7 +42,7 @@ MySceneGraph.prototype.parseLSXNode = function (element) {
                 matrix,
                 [
                     translate.x,
-                    translate.y,
+                    translate.z,
                     translate.z
                 ]
             );

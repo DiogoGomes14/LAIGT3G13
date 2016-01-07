@@ -1,5 +1,8 @@
 function XMLscene() {
     CGFscene.call(this);
+    this.texture = null;
+    this.appearance = null;
+
 }
 
 XMLscene.prototype = Object.create(CGFscene.prototype);
@@ -15,7 +18,7 @@ XMLscene.prototype.init = function (application) {
 
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-    this.gl.clearDepth(100.0);
+    this.gl.clearDepth(1000.0);
     this.gl.enable(this.gl.DEPTH_TEST);
     this.gl.enable(this.gl.CULL_FACE);
     this.gl.depthFunc(this.gl.LEQUAL);
@@ -33,7 +36,31 @@ XMLscene.prototype.init = function (application) {
     this.primitives = [];
     this.activeAnimations = [];
 
+    this.appearance = new CGFappearance(this);
+    this.appearance.setAmbient(0.3, 0.3, 0.3, 1);
+    this.appearance.setDiffuse(0.7, 0.7, 0.7, 1);
+    this.appearance.setSpecular(0.0, 0.0, 0.0, 1);
+    this.appearance.setShininess(120);
+
     this.setUpdatePeriod(1000 / 60);
+
+    // font texture: 16 x 16 characters
+    // http://jens.ayton.se/oolite/files/font-tests/rgba/oolite-font.png
+    this.fontTexture = new CGFtexture(this, "scenes/images/oolite-font.png");
+    this.appearance.setTexture(this.fontTexture);
+
+    // plane where texture character will be rendered
+    this.plane = new Plane(this);
+
+    // instatiate text shader
+    this.textShader = new CGFshader(this.gl, "shaders/font.vert", "shaders/font.frag");
+
+    // set number of rows and columns in font texture
+    this.textShader.setUniformsValues({'dims': [16, 16]});
+
+    //this.piece = new Piece(this);
+
+    this.setPickEnabled(true);
 
 };
 
@@ -48,9 +75,9 @@ XMLscene.prototype.initCameras = function () {
 };
 
 XMLscene.prototype.setDefaultAppearance = function () {
-    this.setAmbient(0.2, 0.4, 0.8, 1.0);
-    this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-    this.setSpecular(0.2, 0.4, 0.8, 1.0);
+    this.setAmbient(0.1, 0.1, 0.1, 1.0);
+    this.setDiffuse(0.8, 0.8, 0.8, 1.0);
+    this.setSpecular(0.0, 0.0, 0.0, 1.0);
     this.setShininess(10.0);
 };
 
@@ -61,8 +88,8 @@ XMLscene.prototype.onGraphLoaded = function () {
     this.initInitials();
     this.initObjects();
     this.initAnimations();
-
-    this.initGameFolder();
+    this.initGame();
+    this.initLsxLights();
 
     //Get the root node and compute the graph
     var root = this.graph.nodes[this.graph["root"]];
@@ -72,6 +99,50 @@ XMLscene.prototype.onGraphLoaded = function () {
     }
 
     this.calculateGraph(root, root.m, root.material, root.texture, []);
+};
+
+XMLscene.prototype.initLsxLights = function () {
+
+    var i = 0;
+    for (var light in this.lsxLights) {
+        if (this.lsxLights.hasOwnProperty(light)) {
+            this.lights[i].setPosition(
+                this.lsxLights[light].position.x,
+                this.lsxLights[light].position.z,
+                this.lsxLights[light].position.z,
+                this.lsxLights[light].position.w
+            );
+            this.lights[i].setAmbient(
+                this.lsxLights[light].ambient.r,
+                this.lsxLights[light].ambient.g,
+                this.lsxLights[light].ambient.b,
+                this.lsxLights[light].ambient.a
+            );
+            this.lights[i].setDiffuse(
+                this.lsxLights[light].diffuse.r,
+                this.lsxLights[light].diffuse.g,
+                this.lsxLights[light].diffuse.b,
+                this.lsxLights[light].diffuse.a
+            );
+            this.lights[i].setSpecular(
+                this.lsxLights[light].specular.r,
+                this.lsxLights[light].specular.g,
+                this.lsxLights[light].specular.b,
+                this.lsxLights[light].specular.a
+            );
+            this.lights[i].name = light;
+
+            if (this.lsxLights[light].enable) {
+                this[light] = true;
+                this.lights[i].enable();
+            } else {
+                this[light] = false;
+            }
+
+            this.application.interface.addLightsSwitch(light);
+            i++;
+        }
+    }
 };
 
 XMLscene.prototype.initAnimations = function () {
@@ -104,7 +175,7 @@ XMLscene.prototype.initAnimations = function () {
 };
 
 XMLscene.prototype.initObjects = function () {
-//OBJECTS
+
     this.objects = [];
     for (var leaf in this.lsxLeaves) {
         if (this.lsxLeaves.hasOwnProperty(leaf)) {
@@ -205,7 +276,7 @@ XMLscene.prototype.initObjects = function () {
 };
 
 XMLscene.prototype.initInitials = function () {
-    //INITIALS
+
     this.camera.near = this.lsxInitials.frustum.near;
     this.camera.far = this.lsxInitials.frustum.far;
 
@@ -216,7 +287,7 @@ XMLscene.prototype.initInitials = function () {
         this.initialMatrix,
         [
             this.lsxInitials.translation.x,
-            this.lsxInitials.translation.y,
+            this.lsxInitials.translation.z,
             this.lsxInitials.translation.z
         ]
     );
@@ -281,29 +352,41 @@ XMLscene.prototype.initInitials = function () {
     this.axis = new CGFaxis(this, this.lsxInitials.reference);
 };
 
-XMLscene.prototype.initGameFolder = function () {
+XMLscene.prototype.initGame = function () {
 
-    this.game = new Spangles();
+    this.game = new Spangles(this);
 
-    this.requestAvailablePlays = function () {
-        this.game.plays = this.game.getAvailablePlays();
-    };
-    this.application.interface.addGameThing("requestAvailablePlays");
+    this.game.requestAvailablePlays();
 
-    this.makePlay = function () {
-        this.game.makePlay(1, 2);
-    };
-    this.application.interface.addGameThing("makePlay");
-
-    this.checkWin = function () {
-        this.game.checkWin();
-    };
-    this.application.interface.addGameThing("checkWin");
-
-    this.quit = function () {
+    this.quitSICSTUS = function () {
         this.game.terminateConnection();
     };
-    this.application.interface.addGameThing("quit");
+    this.application.interface.addGameThing("quitSICSTUS");
+
+    this.topView = function () {
+        //this.camera.pan([-1,0,0]);
+        this.camera.setPosition([0.01,40,0.01]);
+        this.camera.setTarget([0,0,0]);
+    };
+    this.application.interface.addGameThing("topView");
+
+
+    this.topViewFar = function () {
+        //this.camera.pan([-1,0,0]);
+        this.camera.setPosition([0.01,100,0.01]);
+        this.camera.setTarget([0,0,0]);
+    };
+    this.application.interface.addGameThing("topViewFar");
+
+    this.undoMove = function () {
+
+        if(this.game.boardHistory.length > 0){
+            this.game.undoMove();
+        }
+    };
+    this.application.interface.addGameThing("undoMove");
+
+    return true;
 };
 
 XMLscene.prototype.calculateGraph = function (node, matrix, material, texture, animations) {
@@ -437,11 +520,11 @@ XMLscene.prototype.displayPrimitive = function (primitive, matrix, material, tex
 
     //draw the primitive with the calculated transformations/appearance
     this.pushMatrix();
-        this.multMatrix(this.initialMatrix);
-        this.multMatrix(matrix);
-        material.setTexture(texture);
-        material.apply();
-        primitive.display();
+    this.multMatrix(this.initialMatrix);
+    this.multMatrix(matrix);
+    material.setTexture(texture);
+    material.apply();
+    primitive.display();
     this.popMatrix();
 
     //reset the texture of the appearance
@@ -521,15 +604,37 @@ XMLscene.prototype.update = function (currTime) {
 };
 
 XMLscene.prototype.display = function () {
+    this.logPicking();
+    this.clearPickRegistration();
+
     // ---- BEGIN Background, camera and axis setup
 
     // Clear image and depth buffer everytime we update the scene
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    this.gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    this.gl.enable(this.gl.DEPTH_TEST);
 
     // Initialize Model-View matrix as identity (no transformation
     this.updateProjectionMatrix();
     this.loadIdentity();
+
+
+    // An example of how to show something that is not affected by the camera (e.g. a HUP display)
+    /*this.pushMatrix();
+    this.translate(-1, 1.5, -10);
+    this.plane.display();
+    this.popMatrix();
+*/
+
+    if (this.graph.loadedOk) {
+        if(this.game.gameOver){
+            // activate shader for rendering text characters
+            this.setActiveShaderSimple(this.textShader);
+            this.game.displayEndText();
+            this.setActiveShaderSimple(this.defaultShader);
+        }
+    }
 
     // Apply transformations corresponding to the camera position relative to the origin
     this.applyViewMatrix();
@@ -559,6 +664,77 @@ XMLscene.prototype.display = function () {
             }
         }
 
-        this.displayObject();
+        //this.displayObject();
+
+        this.processGame();
+
     }
+
+/*
+    // activate shader for rendering text characters
+    this.setActiveShaderSimple(this.textShader);
+
+    // activate texture containing the font
+    this.appearance.apply();
+
+    this.pushMatrix();
+
+    //this.scale(10,10,10);
+
+    // set character to display to be in the 6th column, 5th line (0-based)
+    // the shader will take care of computing the correct texture coordinates
+    // of that character inside the font texture (check shaders/font.vert )
+    // Homework: This should be wrapped in a function/class for displaying a full string
+
+    this.activeShader.setUniformsValues({'charCoords': [12, 4]});
+    this.plane.display();
+
+    this.translate(1, 0, 0);
+    this.activeShader.setUniformsValues({'charCoords': [1, 4]});
+    this.plane.display();
+
+    this.translate(1, 0, 0);
+    this.activeShader.setUniformsValues({'charCoords': [9, 4]});
+    this.plane.display();
+
+    this.translate(1, 0, 0);
+    this.activeShader.setUniformsValues({'charCoords': [7, 4]});
+    this.plane.display();
+
+    this.popMatrix();
+
+    this.setActiveShaderSimple(this.defaultShader);*/
 };
+
+XMLscene.prototype.processGame = function () {
+
+    this.game.processGame();
+
+    this.appearance.setTexture(null);
+    this.appearance.apply();
+
+    this.game.display();
+
+    this.appearance.setTexture(this.fontTexture);
+    this.appearance.apply();
+};
+
+XMLscene.prototype.logPicking = function () {
+    if (this.pickMode == false) {
+        if (this.pickResults != null && this.pickResults.length > 0) {
+            for (var i=0; i< this.pickResults.length; i++) {
+                var obj = this.pickResults[i][0];
+                if (obj)
+                {
+                    var customId = this.pickResults[i][1];
+                    console.log("Picked object: " + obj + ", with pick id " + customId);
+                    //console.log(obj);
+                    if(!this.game.gameOver){
+                        this.game.pickPiece(obj);
+                    }
+                }
+            }
+            this.pickResults.splice(0,this.pickResults.length);
+        }
+    }
+}

@@ -38,6 +38,7 @@ serialInclude([
     'primitives/Vehicle.js',
     'spanglers/Spanglers.js',
     'spanglers/Server.js',
+    'primitives/Piece.js',
 
     main = function () {
         // Standard application, scene and interface setup
